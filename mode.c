@@ -19,6 +19,7 @@ static SDL_Renderer* renderer=NULL;
 static SDL_Surface* framebuffer=NULL;
 static SDL_Texture* texture=NULL;
 static SDL_Event event;
+static SDL_Colour palette[256];
 
 void setup_sdl(void)
 {
@@ -37,11 +38,11 @@ void setup_sdl(void)
    if (!renderer)
       fatal("Couldn't open graphics interface");
    
-   framebuffer = SDL_CreateRGBSurfaceWithFormat(0, 320, 200, 8, SDL_PIXELFORMAT_INDEX8);
+   framebuffer = SDL_CreateRGBSurfaceWithFormat(0, 320, 200, 32, SDL_PIXELFORMAT_ABGR8888);
    if (!framebuffer)
       fatal("Couldn't allocate software framebuffer");
    
-   texture = SDL_CreateTextureFromSurface(renderer, framebuffer);
+   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 320, 200);
    if (!texture)
       fatal("Couldn't allocate gpu framebuffer");
 }
@@ -76,13 +77,17 @@ void close_sdl(void)
 
 void blit(char *src)
 {
-   int i;
-   void *linesrc, *dst;
+   int i, j;
+   uchar *linesrc;
+   SDL_Colour *dst;
    
    for (i=0; i < 200; ++i) {
-      dst = (char*)framebuffer->pixels + i * framebuffer->pitch;
-      linesrc = src + i * 320;
-      memcpy(dst, linesrc, 320);
+      dst = (SDL_Colour*)((char*)framebuffer->pixels + i * framebuffer->pitch);
+      linesrc = (uchar*)src + i * 320;
+      
+      for (j=0; j < 320; ++j) {
+         (*dst++) = palette[(*linesrc++)];
+      }
    }
    
    SDL_UpdateTexture(texture, NULL, framebuffer->pixels, framebuffer->pitch);
@@ -95,13 +100,12 @@ void set_pal(uchar *pal)
    int i;
    SDL_Colour c;
    
-   if (framebuffer->format->palette)
    for (i=0; i < 256; ++i) {
       c.r = (*pal++);
       c.g = (*pal++);
       c.b = (*pal++);
       c.a = 0xFF;
-      framebuffer->format->palette->colors[i] = c;
+      palette[i] = c;
    }
 }
 
