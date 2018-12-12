@@ -33,11 +33,14 @@ int   scr_row;
 #define VEL_ACCL 0.1f
 #define VEL_FRCT 0.05f
 
+#define MOUSE_SENS 6
+
 char colormap[64][256];
 
 void run_sim(void)
 {
    bool running = TRUE;
+   int mx, my;
    vector temp;
 
    scr_buf = malloc(320*200);
@@ -101,6 +104,12 @@ void run_sim(void)
       cam_ang.tx += cam_angvel.tx;
       cam_ang.ty += cam_angvel.ty;
       cam_ang.tz += cam_angvel.tz;
+      
+      if (get_mmove(&mx, &my)) {
+         cam_ang.tz += mx * MOUSE_SENS;
+         cam_ang.tx += my * MOUSE_SENS;
+      }
+      
       set_view_info(&cam_loc, &cam_ang);
 
       temp.x = cam_vel.x; temp.y = 0; temp.z = 0;

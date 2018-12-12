@@ -20,6 +20,7 @@ static SDL_Surface* framebuffer=NULL;
 static SDL_Texture* texture=NULL;
 static SDL_Event event;
 static SDL_Colour palette[256];
+static int mrelx=0, mrely=0;
 
 void setup_sdl(void)
 {
@@ -34,7 +35,7 @@ void setup_sdl(void)
    if (!window)
       fatal("Couldn't create window");
    
-   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+   renderer = SDL_CreateRenderer(window, -1, 0);
    if (!renderer)
       fatal("Couldn't open graphics interface");
    
@@ -114,8 +115,15 @@ void poll_events(bool* running)
 {
    while (SDL_PollEvent(&event) > 0)
 	{
-      if (event.type == SDL_QUIT)
+      if (event.type == SDL_QUIT) {
          *running = 0;
+      } else if (event.type == SDL_MOUSEMOTION) {
+         mrelx += event.motion.xrel;
+         mrely += event.motion.yrel;
+      } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_m) {
+         SDL_SetRelativeMouseMode(!SDL_GetRelativeMouseMode());
+         mrelx = mrely = 0;
+      }
 	}
 }
 
@@ -123,6 +131,19 @@ bool get_key(int scancode)
 {
    const Uint8 *kb = SDL_GetKeyboardState(NULL);
    return (bool)kb[scancode];
+}
+
+extern bool get_mmove(int *outx, int *outy)
+{
+   if (SDL_GetRelativeMouseMode() && (mrelx || mrely)) {
+      *outx = mrelx;
+      mrelx = 0;
+      *outy = mrely;
+      mrely = 0;
+      return 1;
+   } else {
+      return 0;
+   }
 }
 
 
