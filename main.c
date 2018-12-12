@@ -63,28 +63,28 @@ void run_sim(void)
       if (get_key(SDL_SCANCODE_ESCAPE))
          running = false;
 
-      if (get_key(SDL_SCANCODE_V))
+      if (get_key(SDL_SCANCODE_UP))
          cam_angvel.tx += ANG_ACCL;
-      if (get_key(SDL_SCANCODE_R))
+      if (get_key(SDL_SCANCODE_DOWN))
          cam_angvel.tx -= ANG_ACCL;
       if (get_key(SDL_SCANCODE_Q))
          cam_angvel.ty += ANG_ACCL;
       if (get_key(SDL_SCANCODE_E))
          cam_angvel.ty -= ANG_ACCL;
-      if (get_key(SDL_SCANCODE_D))
+      if (get_key(SDL_SCANCODE_RIGHT))
          cam_angvel.tz += ANG_ACCL;
-      if (get_key(SDL_SCANCODE_A))
+      if (get_key(SDL_SCANCODE_LEFT))
          cam_angvel.tz -= ANG_ACCL;
 
-      if (get_key(SDL_SCANCODE_C))
+      if (get_key(SDL_SCANCODE_D))
          cam_vel.x += VEL_ACCL;
-      if (get_key(SDL_SCANCODE_Z))
+      if (get_key(SDL_SCANCODE_A))
          cam_vel.x -= VEL_ACCL;
-      if (get_key(SDL_SCANCODE_1))
+      if (get_key(SDL_SCANCODE_LSHIFT))
          cam_vel.z -= VEL_ACCL;
-      if (get_key(SDL_SCANCODE_3))
+      if (get_key(SDL_SCANCODE_SPACE))
          cam_vel.z += VEL_ACCL;
-      if (get_key(SDL_SCANCODE_X))
+      if (get_key(SDL_SCANCODE_S))
          cam_vel.y -= VEL_ACCL;
       if (get_key(SDL_SCANCODE_W))
          cam_vel.y += VEL_ACCL;
