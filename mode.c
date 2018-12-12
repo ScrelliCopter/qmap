@@ -144,6 +144,11 @@ int getch()
          default: return -1;
       }
    }
+   else
+   if (event.type == SDL_QUIT)
+   {
+      return 27;
+   }
    
    return -1;
 }
