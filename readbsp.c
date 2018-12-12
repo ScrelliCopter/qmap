@@ -44,7 +44,7 @@ void Error (char *error, ...)
 {
    va_list argptr;
 
-   set_text();
+   close_sdl();
    printf ("************ ERROR ************\n");
 
    va_start (argptr,error);

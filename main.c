@@ -5,7 +5,6 @@
  *   General setup control, main "sim" loop
  */
 
-#include <SDL.h>
 #include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
@@ -122,13 +121,13 @@ int main(int argc, char **argv)
       printf("Usage: qmap <bspfile>\n");
    } else {
       LoadBSPFile(argv[1]);
-      set_lores();
+	  setup_sdl();
       load_graphics();
       init_cache();
       setup_default_point_list();
 
-      run_sim();      
-      set_text();
+      run_sim();
+	  close_sdl();
    }
    return 0;
 }
