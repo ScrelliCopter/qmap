@@ -5,6 +5,7 @@
  *   General setup control, main "sim" loop
  */
 
+#include <SDL_scancode.h>
 #include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
@@ -32,6 +33,7 @@ char colormap[64][256];
 
 void run_sim(void)
 {
+   bool running = TRUE;
    vector temp;
 
    scr_buf = malloc(320*200);
@@ -42,7 +44,7 @@ void run_sim(void)
    cam_loc.y = 240;
    cam_loc.z = 100;
 
-   for (;;) {
+   while (running) {
 
       // RENDER
 
@@ -52,31 +54,40 @@ void run_sim(void)
 
       // UI
 
-      while (kbhit()) {
-         int c = getch();
-         switch(c) {
-            case 'Q': case 27:
-               return;
+      poll_events(&running);
+      
+      if (get_key(SDL_SCANCODE_ESCAPE))
+         running = false;
 
-            case 'v': cam_angvel.tx += ANG_STEP; break;
-            case 'r': cam_angvel.tx -= ANG_STEP; break;
-            case 'q': cam_angvel.ty += ANG_STEP; break;
-            case 'e': cam_angvel.ty -= ANG_STEP; break;
-            case 'd': cam_angvel.tz += ANG_STEP; break;
-            case 'a': cam_angvel.tz -= ANG_STEP; break;
+      if (get_key(SDL_SCANCODE_V))
+         cam_angvel.tx += ANG_STEP;
+      if (get_key(SDL_SCANCODE_R))
+         cam_angvel.tx -= ANG_STEP;
+      if (get_key(SDL_SCANCODE_Q))
+         cam_angvel.ty += ANG_STEP;
+      if (get_key(SDL_SCANCODE_E))
+         cam_angvel.ty -= ANG_STEP;
+      if (get_key(SDL_SCANCODE_D))
+         cam_angvel.tz += ANG_STEP;
+      if (get_key(SDL_SCANCODE_A))
+         cam_angvel.tz -= ANG_STEP;
 
-            case 'c': cam_vel.x += VEL_STEP; break;
-            case 'z': cam_vel.x -= VEL_STEP; break;
-            case '1': cam_vel.z -= VEL_STEP; break;
-            case '3': cam_vel.z += VEL_STEP; break;
-            case 'x': cam_vel.y -= VEL_STEP; break;
-            case 'w': cam_vel.y += VEL_STEP; break;
-               
-            case ' ':
-               cam_vel.x = cam_vel.y = cam_vel.z = 0;
-               cam_angvel.tx = cam_angvel.ty = cam_angvel.tz = 0;
-               break;
-         }
+      if (get_key(SDL_SCANCODE_C))
+         cam_vel.x += VEL_STEP;
+      if (get_key(SDL_SCANCODE_Z))
+         cam_vel.x -= VEL_STEP;
+      if (get_key(SDL_SCANCODE_1))
+         cam_vel.z -= VEL_STEP;
+      if (get_key(SDL_SCANCODE_3))
+         cam_vel.z += VEL_STEP;
+      if (get_key(SDL_SCANCODE_X))
+         cam_vel.y -= VEL_STEP;
+      if (get_key(SDL_SCANCODE_W))
+         cam_vel.y += VEL_STEP;
+      
+      if (get_key(SDL_SCANCODE_SPACE)) {
+         cam_vel.x = cam_vel.y = cam_vel.z = 0;
+         cam_angvel.tx = cam_angvel.ty = cam_angvel.tz = 0;
       }
 
       // "PHYSICS"

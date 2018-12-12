@@ -110,51 +110,19 @@ void set_pal(uchar *pal)
 }
 
 
-int kbhit()
+void poll_events(bool* running)
 {
-   if (SDL_PollEvent(&event) > 0)
-      return 1;
-   else
-      return 0;
+   while (SDL_PollEvent(&event) > 0)
+	{
+      if (event.type == SDL_QUIT)
+         *running = 0;
+	}
 }
 
-int getch()
+bool get_key(int scancode)
 {
-   if (event.type == SDL_KEYDOWN)
-   {
-      if (event.key.keysym.mod & KMOD_SHIFT)
-         if (event.key.keysym.sym == SDLK_q)
-            return 'Q';
-      
-      switch (event.key.keysym.sym) {
-         case SDLK_ESCAPE: return 27;
-   
-         case SDLK_v: return 'v';
-         case SDLK_r: return 'r';
-         case SDLK_q: return 'q';
-         case SDLK_e: return 'e';
-         case SDLK_d: return 'd';
-         case SDLK_a: return 'a';
-   
-         case SDLK_c: return 'c';
-         case SDLK_z: return 'z';
-         case SDLK_1: return '1';
-         case SDLK_3: return '3';
-         case SDLK_x: return 'x';
-         case SDLK_w: return 'w';
-         
-         case SDLK_SPACE: return ' ';
-         
-         default: return -1;
-      }
-   }
-   else
-   if (event.type == SDL_QUIT)
-   {
-      return 27;
-   }
-   
-   return -1;
+   const Uint8 *kb = SDL_GetKeyboardState(NULL);
+   return (bool)kb[scancode];
 }
 
 

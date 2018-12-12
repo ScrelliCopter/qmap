@@ -8,7 +8,7 @@ extern void set_pal(uchar *pal);
 extern void setup_sdl(void);
 extern void close_sdl(void);
 
-extern int kbhit();
-extern int getch();
+extern void poll_events(bool* running);
+extern bool get_key(int scancode);
 
 #endif
