@@ -15,7 +15,7 @@
 #define DIST  256.0    // dist to switch first mip level
 #define DIST2 (DIST*DIST)
 
-int compute_mip_level(face)
+int compute_mip_level(int face)
 {
    // dumb algorithm: grab 3d coordinate of some vertex,
    // compute dist from viewer
