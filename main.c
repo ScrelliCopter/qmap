@@ -133,6 +133,15 @@ void run_sim(void)
          if (cam_vel.y > 0.0f)
             cam_vel.y = 0.0f;
       }
+      if (cam_vel.z > 0.0f) {
+         cam_vel.z -= VEL_FRCT;
+         if (cam_vel.z < 0.0f)
+            cam_vel.z = 0.0f;
+      } else if (cam_vel.z < 0.0f) {
+         cam_vel.z += VEL_FRCT;
+         if (cam_vel.z > 0.0f)
+            cam_vel.z = 0.0f;
+      }
       
       if ((short)cam_angvel.tx > 0) {
          cam_angvel.tx -= ANG_FRCT;
