@@ -14,6 +14,10 @@ typedef long int32;
 #define FALSE 0
 #define TRUE  1
 
+#define MAX(a, b)      (((a) > (b)) ? (a) : (b))
+#define MIN(a, b)      (((a) < (b)) ? (a) : (b))
+#define CLAMP(x, a, b) (MIN((b), MAX((a), (x))))
+
 // convert from 64-bit IEEE little-endian to 32-bit int, faster
 // than built-in Intel ops, but doesn't obey rounding rule and
 // doesn't deal well with overflow
