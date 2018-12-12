@@ -6,7 +6,6 @@
  *   mode, blit to framebuffer, set palette)
  */
 
-#include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

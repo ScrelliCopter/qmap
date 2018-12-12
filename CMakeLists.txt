@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 project(qmap)
 
+find_package(SDL2 REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIRS})
+
 set(SOURCES
 
 	3d.h
@@ -30,3 +34,4 @@ set(SOURCES
 	surface.c)
 
 add_executable(qmap ${SOURCES})
+target_link_libraries(qmap ${SDL2_LIBRARIES} m)

@@ -5,14 +5,13 @@
  *   General setup control, main "sim" loop
  */
 
-#include <conio.h>
-#include <dos.h>
+#include <SDL.h>
+#include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
 #include "3d.h"
 #include "fix.h"
 #include "scr.h"
-#include "char.h"
 #include "tm.h"
 #include "render.h"
 #include "bsp.h"
