@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "text.h"
+#include "3d.h"
 #include "mode.h"
 
 static bool init=0;
@@ -26,6 +27,8 @@ static SDL_Texture* texture=NULL, *fonttex=NULL;
 static SDL_Event event;
 static SDL_Colour palette[256];
 static int mrelx=0, mrely=0;
+
+int aspectmode=0;
 
 void setup_sdl(void)
 {
@@ -194,9 +197,24 @@ void poll_events(bool *running)
       } else if (event.type == SDL_MOUSEMOTION) {
          mrelx += event.motion.xrel;
          mrely += event.motion.yrel;
-      } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_m) {
-         SDL_SetRelativeMouseMode(!SDL_GetRelativeMouseMode());
-         mrelx = mrely = 0;
+      } else if (event.type == SDL_KEYDOWN) {
+      	if (event.key.keysym.sym == SDLK_m) {
+				SDL_SetRelativeMouseMode(!SDL_GetRelativeMouseMode());
+				mrelx = mrely = 0;
+			} else if (event.key.keysym.sym == SDLK_p) {
+      		aspectmode = (aspectmode + 1) % 3;
+      		if (aspectmode == 0)
+      			proj_ymod = 1.0f;
+      		else if (aspectmode == 1)
+      			proj_ymod = 200.0f / 240.0f;
+      		else {
+      			int winw, winh;
+      			SDL_GetWindowSize(window, &winw, &winh);
+      			proj_ymod = ((float)winw / (float)winh) * (200.0f / 320.0f);
+      		}
+      	}
+		} else if (aspectmode == 2 && event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+      	proj_ymod = ((float)event.window.data1 / (float)event.window.data2) * (200.0f / 320.0f);
       }
 	}
 }

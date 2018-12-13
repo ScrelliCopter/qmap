@@ -50,6 +50,8 @@ extern int clip_poly(int n, point_3d **vl, int codes_or, point_3d ***out_vl);
 
 extern double clip_scale_x, clip_scale_y; // needed by poly clipper
 
+extern float proj_ymod;
+
 #define CC_OFF_LEFT 1
 #define CC_OFF_RIGHT 2
 #define CC_OFF_TOP 4

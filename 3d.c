@@ -63,9 +63,14 @@ static vector cam_loc;
 
 static fix clip_x_low, clip_x_high, clip_y_low, clip_y_high;
 
-static float proj_scale_x = 160, proj_scale_y = 160 * 200 / 240;
-static float xcenter = 159.5, ycenter = 99.5;
-static float near_clip = 0.01, near_code = 16.0;
+const static float proj_scale = 160.0f;
+float proj_ymod = 1.0f;
+
+const static float xcenter = 159.5;
+const static float ycenter = 99.5;
+
+const static float near_clip = 0.01;
+const static float near_code = 16.0;
 
 double clip_scale_x, clip_scale_y;
 
@@ -101,8 +106,8 @@ void set_view_info(vector *loc, angvec *ang)
 
    // roll projection math into transformation
    for (i=0; i < 3; ++i) {
-      view_matrix[0][i] *= proj_scale_x;
-      view_matrix[2][i] *= proj_scale_y;
+      view_matrix[0][i] *= proj_scale;
+      view_matrix[2][i] *= proj_scale * proj_ymod;
    }
 }
 
