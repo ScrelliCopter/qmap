@@ -6,6 +6,7 @@
  */
 
 #include <SDL_scancode.h>
+#include <SDL_timer.h>
 #include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
@@ -27,6 +28,8 @@ angvec cam_ang, cam_angvel;
 char *scr_buf;
 int   scr_row;
 
+int fps=0, framecount=0, frametimer=0;
+
 #define ANG_MXVL 256
 #define ANG_ACCL 12
 #define ANG_FRCT 6
@@ -43,6 +46,7 @@ void run_sim(void)
    bool running = TRUE;
    int mx, my;
    vector temp;
+   char text[256];
 
    scr_buf = malloc(320*200);
    scr_row = 320;
@@ -53,6 +57,13 @@ void run_sim(void)
    cam_loc.z = 100;
 
    while (running) {
+      
+      int curtime = SDL_GetTicks();
+      if (SDL_TICKS_PASSED(curtime, frametimer + 1000)) {
+         frametimer = curtime;
+         fps = framecount;
+         framecount = 0;
+      }
 
       // RENDER
 
@@ -62,7 +73,8 @@ void run_sim(void)
 
       // UI
       
-      draw_text(4, 4, "The quick brown Uberphawx jumps\nover the lazy Wout 123456780 times.\nwoah, this are the textarino\nhaha I stole apple's terminal font\n!!!???");
+      snprintf(text, sizeof(text), "FPS: %d", fps);
+      draw_text(8, 6, text);
       
       present();
       
@@ -186,6 +198,8 @@ void run_sim(void)
          if ((short)cam_angvel.tz > 0)
             cam_angvel.tz = 0;
       }
+      
+      ++framecount;
    }
 }
 
@@ -210,13 +224,13 @@ int main(int argc, char **argv)
       printf("Usage: qmap <bspfile>\n");
    } else {
       LoadBSPFile(argv[1]);
-	  setup_sdl();
+      setup_sdl();
       load_graphics();
       init_cache();
       setup_default_point_list();
 
       run_sim();
-	  close_sdl();
+      close_sdl();
    }
    return 0;
 }
