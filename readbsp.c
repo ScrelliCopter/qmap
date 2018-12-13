@@ -29,10 +29,6 @@
 
 #define PATHSEPERATOR   '/'
 
-// set these before calling CheckParm
-int myargc;
-char **myargv;
-
 /*
 =================
 Error
@@ -52,14 +48,6 @@ void Error (char *error, ...)
    va_end (argptr);
    printf ("\n");
    exit (1);
-}
-
-char *copystring(char *s)
-{
-   char   *b;
-   b = malloc(strlen(s)+1);
-   strcpy (b, s);
-   return b;
 }
 
 /*
@@ -108,7 +96,7 @@ FILE *SafeOpenRead (char *filename)
 
 void SafeRead (FILE *f, void *buffer, int count)
 {
-   if ( fread (buffer, 1, count, f) != (size_t)count)
+   if (fread (buffer, 1, count, f) != (size_t)count)
       Error ("File read failure");
 }
 
