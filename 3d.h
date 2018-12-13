@@ -12,7 +12,7 @@ typedef struct
 
 typedef struct
 {
-   fixang tx,ty,tz;
+   double tx,ty,tz;
 } angvec;
 
 typedef struct

@@ -15,10 +15,10 @@ double dot_vec_dbl(double *a, vector *b)
    return a[0]*b->x + a[1]*b->y + a[2]*b->z;
 }
 
-void rot_x(double *v, fixang ang)
+void rot_x(double *v, double ang)
 {
-   double s = sin(ang * 3.141592 / 0x8000);
-   double c = cos(ang * 3.141592 / 0x8000);
+   double s = sin(ang);
+   double c = cos(ang);
    double y,z;
 
    y =  c * v[1] + s * v[2];
@@ -27,10 +27,10 @@ void rot_x(double *v, fixang ang)
    v[2] = z;
 }
 
-void rot_y(double *v, fixang ang)
+void rot_y(double *v, double ang)
 {
-   double s = sin(ang * 3.141592 / 0x8000);
-   double c = cos(ang * 3.141592 / 0x8000);
+   double s = sin(ang);
+   double c = cos(ang);
    double x,z;
 
    z =  c * v[2] + s * v[0];
@@ -39,10 +39,10 @@ void rot_y(double *v, fixang ang)
    v[2] = z;
 }
 
-void rot_z(double *v, fixang ang)
+void rot_z(double *v, double ang)
 {
-   double s = sin(ang * 3.141592 / 0x8000);
-   double c = cos(ang * 3.141592 / 0x8000);
+   double s = sin(ang);
+   double c = cos(ang);
    double x,y;
 
    x =  c * v[0] + s * v[1];

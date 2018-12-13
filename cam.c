@@ -11,14 +11,15 @@
 #include "clock.h"
 #include "cam.h"
 
-#define ANG_MXVL 256
-#define ANG_ACCL 12
-#define ANG_FRCT 6
-#define VEL_MXVL 420.0f
-#define VEL_ACCL 15000.0f
-#define VEL_FRCT 4096.0f
+#define ANG_MXVL 4.0
+#define ANG_ACCL 30.0
+#define ANG_FRCT 20.0
 
-#define MOUSE_SENS 6
+#define VEL_MXVL 420.0f
+#define VEL_ACCL 2400.0f
+#define VEL_FRCT (VEL_ACCL / 2.0f)
+
+#define MOUSE_SENS (1.0 / 1600.0)
 
 extern void cam_init(camera *cam)
 {
@@ -36,17 +37,17 @@ extern void cam_update(camera *cam)
 	// CONTROLS
 
 	if (get_key(SDL_SCANCODE_UP))
-		cam->angvel.tx += ANG_ACCL;
+		cam->angvel.tx += ANG_ACCL * delta;
 	if (get_key(SDL_SCANCODE_DOWN))
-		cam->angvel.tx -= ANG_ACCL;
+		cam->angvel.tx -= ANG_ACCL * delta;
 	if (get_key(SDL_SCANCODE_Q))
-		cam->angvel.ty += ANG_ACCL;
+		cam->angvel.ty += ANG_ACCL * delta;
 	if (get_key(SDL_SCANCODE_E))
-		cam->angvel.ty -= ANG_ACCL;
+		cam->angvel.ty -= ANG_ACCL * delta;
 	if (get_key(SDL_SCANCODE_RIGHT))
-		cam->angvel.tz += ANG_ACCL;
+		cam->angvel.tz += ANG_ACCL * delta;
 	if (get_key(SDL_SCANCODE_LEFT))
-		cam->angvel.tz -= ANG_ACCL;
+		cam->angvel.tz -= ANG_ACCL * delta;
 
 	if (get_key(SDL_SCANCODE_D))
 		cam->vel.x += VEL_ACCL * delta;
@@ -63,8 +64,8 @@ extern void cam_update(camera *cam)
 	
 	// apply mouse movement
 	if (get_mmove(&mx, &my)) {
-		cam->ang.tz += mx * MOUSE_SENS;
-		cam->ang.tx += my * MOUSE_SENS;
+		cam->ang.tz += (double)mx * MOUSE_SENS;
+		cam->ang.tx += (double)my * MOUSE_SENS;
 	}
 	
 	
@@ -76,14 +77,14 @@ extern void cam_update(camera *cam)
 	cam->vel.z = CLAMP(cam->vel.z, -VEL_MXVL, VEL_MXVL);
 	
 	// clamp rotational velocity
-	cam->angvel.tx = (fixang)CLAMP((short)cam->angvel.tx, -ANG_MXVL, ANG_MXVL);
-	cam->angvel.ty = (fixang)CLAMP((short)cam->angvel.ty, -ANG_MXVL, ANG_MXVL);
-	cam->angvel.tz = (fixang)CLAMP((short)cam->angvel.tz, -ANG_MXVL, ANG_MXVL);
+	cam->angvel.tx = CLAMP(cam->angvel.tx, -ANG_MXVL, ANG_MXVL);
+	cam->angvel.ty = CLAMP(cam->angvel.ty, -ANG_MXVL, ANG_MXVL);
+	cam->angvel.tz = CLAMP(cam->angvel.tz, -ANG_MXVL, ANG_MXVL);
 
 	// apply rotational velocity
-	cam->ang.tx += cam->angvel.tx;
-	cam->ang.ty += cam->angvel.ty;
-	cam->ang.tz += cam->angvel.tz;
+	cam->ang.tx += cam->angvel.tx * delta;
+	cam->ang.ty += cam->angvel.ty * delta;
+	cam->ang.tz += cam->angvel.tz * delta;
 	
 	//set_view_info(&cam->loc, &cam->ang);
 
@@ -142,31 +143,31 @@ extern void cam_update(camera *cam)
 	}
 	
 	// apply rotational friction
-	if ((short)cam->angvel.tx > 0) {
-		cam->angvel.tx -= ANG_FRCT;
-		if ((short)cam->angvel.tx < 0)
-			cam->angvel.tx = 0;
-	} else if ((short)cam->angvel.tx < 0) {
-		cam->angvel.tx += ANG_FRCT;
-		if ((short)cam->angvel.tx > 0)
-			cam->angvel.tx = 0;
+	if (cam->angvel.tx > 0.0) {
+		cam->angvel.tx -= ANG_FRCT * delta;
+		if (cam->angvel.tx < 0.0)
+			cam->angvel.tx = 0.0;
+	} else if (cam->angvel.tx < 0.0) {
+		cam->angvel.tx += ANG_FRCT * delta;
+		if (cam->angvel.tx > 0.0)
+			cam->angvel.tx = 0.0;
 	}
-	if ((short)cam->angvel.ty > 0) {
-		cam->angvel.ty -= ANG_FRCT;
-		if ((short)cam->angvel.ty < 0)
-			cam->angvel.ty = 0;
-	} else if ((short)cam->angvel.ty < 0) {
-		cam->angvel.ty += ANG_FRCT;
-		if ((short)cam->angvel.ty > 0)
-			cam->angvel.ty = 0;
+	if (cam->angvel.ty > 0.0) {
+		cam->angvel.ty -= ANG_FRCT * delta;
+		if (cam->angvel.ty < 0.0)
+			cam->angvel.ty = 0.0;
+	} else if (cam->angvel.ty < 0.0) {
+		cam->angvel.ty += ANG_FRCT * delta;
+		if (cam->angvel.ty > 0.0)
+			cam->angvel.ty = 0.0;
 	}
-	if ((short)cam->angvel.tz > 0) {
-		cam->angvel.tz -= ANG_FRCT;
-		if ((short)cam->angvel.tz < 0)
-			cam->angvel.tz = 0;
-	} else if ((short)cam->angvel.tz < 0) {
-		cam->angvel.tz += ANG_FRCT;
-		if ((short)cam->angvel.tz > 0)
-			cam->angvel.tz = 0;
+	if (cam->angvel.tz > 0.0) {
+		cam->angvel.tz -= ANG_FRCT * delta;
+		if (cam->angvel.tz < 0.0)
+			cam->angvel.tz = 0.0;
+	} else if (cam->angvel.tz < 0.0) {
+		cam->angvel.tz += ANG_FRCT * delta;
+		if (cam->angvel.tz > 0.0)
+			cam->angvel.tz = 0.0;
 	}
 }
