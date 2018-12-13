@@ -193,6 +193,8 @@ void run_sim(void)
             cam_angvel.tz = 0;
       }
    }
+   
+   free(scr_buf);
 }
 
 void load_graphics(void)
