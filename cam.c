@@ -14,9 +14,9 @@
 #define ANG_MXVL 256
 #define ANG_ACCL 12
 #define ANG_FRCT 6
-#define VEL_MXVL 2.0f
-#define VEL_ACCL 0.1f
-#define VEL_FRCT 0.05f
+#define VEL_MXVL 420.0f
+#define VEL_ACCL 15000.0f
+#define VEL_FRCT 4096.0f
 
 #define MOUSE_SENS 6
 
@@ -49,17 +49,17 @@ extern void cam_update(camera *cam)
 		cam->angvel.tz -= ANG_ACCL;
 
 	if (get_key(SDL_SCANCODE_D))
-		cam->vel.x += VEL_ACCL;
+		cam->vel.x += VEL_ACCL * delta;
 	if (get_key(SDL_SCANCODE_A))
-		cam->vel.x -= VEL_ACCL;
+		cam->vel.x -= VEL_ACCL * delta;
 	if (get_key(SDL_SCANCODE_LSHIFT))
-		cam->vel.z -= VEL_ACCL;
+		cam->vel.z -= VEL_ACCL * delta;
 	if (get_key(SDL_SCANCODE_SPACE))
-		cam->vel.z += VEL_ACCL;
+		cam->vel.z += VEL_ACCL * delta;
 	if (get_key(SDL_SCANCODE_S))
-		cam->vel.y -= VEL_ACCL;
+		cam->vel.y -= VEL_ACCL * delta;
 	if (get_key(SDL_SCANCODE_W))
-		cam->vel.y += VEL_ACCL;
+		cam->vel.y += VEL_ACCL * delta;
 	
 	// apply mouse movement
 	if (get_mmove(&mx, &my)) {
@@ -88,7 +88,7 @@ extern void cam_update(camera *cam)
 	//set_view_info(&cam->loc, &cam->ang);
 
 	// apply translational velocity (transformed by rotation)
-	temp.x = cam->vel.x;
+	temp.x = cam->vel.x * delta;
 	temp.y = 0;
 	temp.z = 0;
 	rotate_vec(&temp);
@@ -97,7 +97,7 @@ extern void cam_update(camera *cam)
 	cam->loc.z += temp.z;
 
 	temp.x = 0;
-	temp.y = cam->vel.y;
+	temp.y = cam->vel.y * delta;
 	temp.z = 0;
 	rotate_vec(&temp);
 	cam->loc.x += temp.x;
@@ -106,7 +106,7 @@ extern void cam_update(camera *cam)
 
 	temp.x = 0;
 	temp.y = 0;
-	temp.z = cam->vel.z;
+	temp.z = cam->vel.z * delta;
 	rotate_vec(&temp);
 	cam->loc.x += temp.x;
 	cam->loc.y += temp.y;
@@ -114,29 +114,29 @@ extern void cam_update(camera *cam)
 	
 	// apply translational friction
 	if (cam->vel.x > 0.0f) {
-		cam->vel.x -= VEL_FRCT;
+		cam->vel.x -= VEL_FRCT * delta;
 		if (cam->vel.x < 0.0f)
 			cam->vel.x = 0.0f;
 	} else if (cam->vel.x < 0.0f) {
-		cam->vel.x += VEL_FRCT;
+		cam->vel.x += VEL_FRCT * delta;
 		if (cam->vel.x > 0.0f)
 			cam->vel.x = 0.0f;
 	}
 	if (cam->vel.y > 0.0f) {
-		cam->vel.y -= VEL_FRCT;
+		cam->vel.y -= VEL_FRCT * delta;
 		if (cam->vel.y < 0.0f)
 			cam->vel.y = 0.0f;
 	} else if (cam->vel.y < 0.0f) {
-		cam->vel.y += VEL_FRCT;
+		cam->vel.y += VEL_FRCT * delta;
 		if (cam->vel.y > 0.0f)
 			cam->vel.y = 0.0f;
 	}
 	if (cam->vel.z > 0.0f) {
-		cam->vel.z -= VEL_FRCT;
+		cam->vel.z -= VEL_FRCT * delta;
 		if (cam->vel.z < 0.0f)
 			cam->vel.z = 0.0f;
 	} else if (cam->vel.z < 0.0f) {
-		cam->vel.z += VEL_FRCT;
+		cam->vel.z += VEL_FRCT * delta;
 		if (cam->vel.z > 0.0f)
 			cam->vel.z = 0.0f;
 	}
