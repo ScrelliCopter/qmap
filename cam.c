@@ -80,6 +80,16 @@ extern void cam_update(camera *cam)
 	cam->angvel.tx = CLAMP(cam->angvel.tx, -ANG_MXVL, ANG_MXVL);
 	cam->angvel.ty = CLAMP(cam->angvel.ty, -ANG_MXVL, ANG_MXVL);
 	cam->angvel.tz = CLAMP(cam->angvel.tz, -ANG_MXVL, ANG_MXVL);
+	
+	// weight roll back to centre
+	if (fabs(cam->ang.ty) > 0.000001) {
+		double x = fabs(cam->ang.ty);
+		double x1 = x + 1.0;
+		double curve = (1.0 - x1 / (x1 * x1)) * 2.0 + x * 0.125;
+		cam->ang.ty -= copysign(curve, cam->ang.ty) * 2.0 * delta;
+	} else {
+		cam->ang.ty = 0.0;
+	}
 
 	// apply rotational velocity
 	cam->ang.tx += cam->angvel.tx * delta;
@@ -96,15 +106,15 @@ extern void cam_update(camera *cam)
 		if (cam->angvel.tx > 0.0)
 			cam->angvel.tx = 0.0;
 	}
-	if (cam->ang.ty < 0.0) {
-		cam->ang.ty -= M_PI * 2.0;
-	} else if (cam->ang.ty >= M_PI * 2.0) {
+	if (cam->ang.ty < -M_PI) {
 		cam->ang.ty += M_PI * 2.0;
+	} else if (cam->ang.ty > M_PI) {
+		cam->ang.ty -= M_PI * 2.0;
 	}
 	if (cam->ang.tz < 0.0) {
-		cam->ang.tz -= M_PI * 2.0;
-	} else if (cam->ang.tz >= M_PI * 2.0) {
 		cam->ang.tz += M_PI * 2.0;
+	} else if (cam->ang.tz >= M_PI * 2.0) {
+		cam->ang.tz -= M_PI * 2.0;
 	}
 	
 
