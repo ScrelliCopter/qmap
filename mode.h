@@ -4,6 +4,7 @@
 #include "s.h"
 
 extern void blit(char *src);
+extern void present();
 extern void set_pal(uchar *pal);
 extern void setup_sdl(void);
 extern void close_sdl(void);

@@ -17,6 +17,7 @@
 #include "bsp.h"
 #include "surface.h"
 #include "poly.h"
+#include "text.h"
 
 double chop_temp;
 
@@ -60,6 +61,12 @@ void run_sim(void)
       blit(scr_buf);
 
       // UI
+      
+      draw_text(4, 4, "The quick brown Uberphawx jumps\nover the lazy Wout 123456780 times.\nwoah, this are the textarino\nhaha I stole apple's terminal font\n!!!???");
+      
+      present();
+      
+      // CONTROLS
 
       poll_events(&running);
       

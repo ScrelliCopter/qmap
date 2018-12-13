@@ -20,6 +20,7 @@ set(SOURCES
 	surface.h
 	tmap3d.h
 	tm.h
+	text.h
 
 	main.c
 	clippoly.c
@@ -31,7 +32,8 @@ set(SOURCES
 	tmap3d.c
 	poly.c
 	tm_c.c
-	surface.c)
+	surface.c
+	iso_font.c)
 
 add_executable(qmap ${SOURCES})
 target_link_libraries(qmap ${SDL2_LIBRARIES} m)
