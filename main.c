@@ -115,6 +115,7 @@ void run_sim(void)
       
       cam_vel.x = CLAMP(cam_vel.x, -VEL_MXVL, VEL_MXVL);
       cam_vel.y = CLAMP(cam_vel.y, -VEL_MXVL, VEL_MXVL);
+      cam_vel.z = CLAMP(cam_vel.z, -VEL_MXVL, VEL_MXVL);
       
       cam_angvel.tx = (fixang)CLAMP((short)cam_angvel.tx, -ANG_MXVL, ANG_MXVL);
       cam_angvel.ty = (fixang)CLAMP((short)cam_angvel.ty, -ANG_MXVL, ANG_MXVL);
