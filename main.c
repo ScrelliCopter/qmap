@@ -53,7 +53,7 @@ void run_sim(void)
 
       // UI
       
-      snprintf(text, sizeof(text), "FPS: %f", fps);
+      snprintf(text, sizeof(text), "FPS: %.2f", fps);
       draw_text(8, 6, text);
       
       present();
