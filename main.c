@@ -28,7 +28,31 @@ angvec cam_ang, cam_angvel;
 char *scr_buf;
 int   scr_row;
 
-int fps=0, framecount=0, frametimer=0;
+#define FPS_SMOOTH 128
+int fpsbuf[FPS_SMOOTH];
+int fpsidx, prevtime;
+
+void fps_init()
+{
+   fpsidx = 0;
+   prevtime = SDL_GetTicks();
+   memset(fpsbuf, 0, sizeof(fpsbuf));
+}
+
+float fps_tick()
+{
+   int i, curtime, total;
+   
+   curtime = SDL_GetTicks();
+   fpsbuf[fpsidx] = curtime - prevtime;
+   fpsidx = (fpsidx + 1) % FPS_SMOOTH;
+   prevtime = curtime;
+   
+   total = 0;
+   for (i=0; i < FPS_SMOOTH; ++i)
+      total += fpsbuf[i];
+   return 1000.0f / ((float)total / (float)FPS_SMOOTH);
+}
 
 #define ANG_MXVL 256
 #define ANG_ACCL 12
@@ -44,7 +68,8 @@ char colormap[64][256];
 void run_sim(void)
 {
    bool running = TRUE;
-   int mx, my;
+   int i, mx, my;
+   float fps;
    vector temp;
    char text[256];
 
@@ -58,12 +83,7 @@ void run_sim(void)
 
    while (running) {
       
-      int curtime = SDL_GetTicks();
-      if (SDL_TICKS_PASSED(curtime, frametimer + 1000)) {
-         frametimer = curtime;
-         fps = framecount;
-         framecount = 0;
-      }
+      fps = fps_tick();
 
       // RENDER
 
@@ -73,7 +93,7 @@ void run_sim(void)
 
       // UI
       
-      snprintf(text, sizeof(text), "FPS: %d", fps);
+      snprintf(text, sizeof(text), "FPS: %f", fps);
       draw_text(8, 6, text);
       
       present();
@@ -199,8 +219,6 @@ void run_sim(void)
          if ((short)cam_angvel.tz > 0)
             cam_angvel.tz = 0;
       }
-      
-      ++framecount;
    }
 }
 
@@ -229,7 +247,8 @@ int main(int argc, char **argv)
       load_graphics();
       init_cache();
       setup_default_point_list();
-
+      fps_init();
+      
       run_sim();
       close_sdl();
    }
