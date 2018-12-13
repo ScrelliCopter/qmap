@@ -86,7 +86,27 @@ extern void cam_update(camera *cam)
 	cam->ang.ty += cam->angvel.ty * delta;
 	cam->ang.tz += cam->angvel.tz * delta;
 	
-	//set_view_info(&cam->loc, &cam->ang);
+	// keep angles within reasonable ranges
+	if (cam->ang.tx < -M_PI * 0.5) {
+		cam->ang.tx = -M_PI * 0.5;
+		if (cam->angvel.tx < 0.0)
+			cam->angvel.tx = 0.0;
+	} else if (cam->ang.tx > M_PI * 0.5) {
+		cam->ang.tx = M_PI * 0.5;
+		if (cam->angvel.tx > 0.0)
+			cam->angvel.tx = 0.0;
+	}
+	if (cam->ang.ty < 0.0) {
+		cam->ang.ty -= M_PI * 2.0;
+	} else if (cam->ang.ty >= M_PI * 2.0) {
+		cam->ang.ty += M_PI * 2.0;
+	}
+	if (cam->ang.tz < 0.0) {
+		cam->ang.tz -= M_PI * 2.0;
+	} else if (cam->ang.tz >= M_PI * 2.0) {
+		cam->ang.tz += M_PI * 2.0;
+	}
+	
 
 	// apply translational velocity (transformed by rotation)
 	temp.x = cam->vel.x * delta;
