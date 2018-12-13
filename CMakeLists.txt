@@ -12,7 +12,7 @@ else()
 		"--preload-file colormap.lmp"
 		"--preload-file e1m1.bsp")
 
-	add_definitions(-s USE_SDL=2)
+	add_definitions(-O2 -s USE_SDL=2)
 	set(LIBS "-s USE_SDL=2" ${FILES} m)
 endif()
 
