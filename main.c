@@ -5,6 +5,10 @@
  *   General setup control, main "sim" loop
  */
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include <SDL_scancode.h>
 #include <stdio.h>
 #include "bspfile.h"
@@ -28,11 +32,41 @@ int   scr_row;
 
 uchar colormap[64][256];
 
+bool running;
+camera cam;
+
+void sim_loop(void)
+{
+   char text[256];
+   
+   // RENDER
+
+   set_view_info(&cam.loc, &cam.ang);
+   render_world(&cam.loc);
+   blit(scr_buf);
+
+   // UI
+   
+   snprintf(text, sizeof(text), "FPS: %.2f", fps);
+   draw_text(8, 6, text);
+   
+   present();
+   
+   // INPUT
+
+   poll_events(&running);
+   if (get_key(SDL_SCANCODE_ESCAPE))
+      running = false;
+   
+   // LOGIC
+   
+   clock_tick();
+   cam_update(&cam);
+}
+
 void run_sim(void)
 {
-   bool running = TRUE;
-   char text[256];
-   camera cam;
+   running = TRUE;
 
    scr_buf = malloc(SCREENW * SCREENH);
    scr_row = SCREENW;
@@ -43,32 +77,11 @@ void run_sim(void)
    cam.loc.y = 240;
    cam.loc.z = 100;
 
-   while (running) {
-
-      // RENDER
-
-      set_view_info(&cam.loc, &cam.ang);
-      render_world(&cam.loc);
-      blit(scr_buf);
-
-      // UI
-      
-      snprintf(text, sizeof(text), "FPS: %.2f", fps);
-      draw_text(8, 6, text);
-      
-      present();
-      
-      // INPUT
-
-      poll_events(&running);
-      if (get_key(SDL_SCANCODE_ESCAPE))
-		   running = false;
-      
-      // LOGIC
-      
-      clock_tick();
-      cam_update(&cam);
-   }
+#ifdef EMSCRIPTEN
+   emscripten_set_main_loop(sim_loop, 0, 1);
+#else
+   while (running) sim_loop();
+#endif
    
    free(scr_buf);
 }
@@ -90,10 +103,15 @@ void load_graphics(void)
 
 int main(int argc, char **argv)
 {
+#ifdef EMSCRIPTEN
+	{
+		LoadBSPFile("e1m1.bsp");
+#else
    if (argc != 2) {
       printf("Usage: qmap <bspfile>\n");
    } else {
       LoadBSPFile(argv[1]);
+#endif
       setup_sdl();
       load_graphics();
       init_cache();

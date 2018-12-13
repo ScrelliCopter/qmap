@@ -1,9 +1,20 @@
 cmake_minimum_required(VERSION 3.12)
 project(qmap)
 
-find_package(SDL2 REQUIRED)
+if (NOT EMSCRIPTEN)
+	find_package(SDL2 REQUIRED)
+	add_definitions(${SDL2_CFLAGS})
+	include_directories(${SDL2_INCLUDE_DIRS})
+	set(LIBS ${SDL2_LIBRARIES} m)
+else()
+	set(FILES
+		"--preload-file palette.lmp"
+		"--preload-file colormap.lmp"
+		"--preload-file e1m1.bsp")
 
-include_directories(${SDL2_INCLUDE_DIRS})
+	add_definitions(-s USE_SDL=2)
+	set(LIBS "-s USE_SDL=2" ${FILES} m)
+endif()
 
 set(SOURCES
 
@@ -40,4 +51,4 @@ set(SOURCES
 	iso_font.c)
 
 add_executable(qmap ${SOURCES})
-target_link_libraries(qmap ${SDL2_LIBRARIES} m)
+target_link_libraries(qmap ${LIBS})
