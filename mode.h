@@ -13,4 +13,7 @@ extern void poll_events(bool* running);
 extern bool get_key(int scancode);
 extern bool get_mmove(int *outx, int *outy);
 
+#define SCREENW 320
+#define SCREENH 200
+
 #endif

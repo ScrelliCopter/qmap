@@ -14,6 +14,7 @@
 #include "bsp.h"
 #include "scr.h"
 #include "poly.h"
+#include "mode.h"
 
 char vis_face[MAX_MAP_FACES/8+1];
 char vis_leaf[MAX_MAP_LEAFS/8+1];
@@ -131,7 +132,7 @@ void render_world(vector *loc)
    compute_view_frustrum(planes);
 
    if (!visit_visible_leaves(loc)) {
-      memset(scr_buf, 0, 320*200);
+      memset(scr_buf, 0, SCREENW * SCREENH);
       memset(vis_leaf, 255, sizeof(vis_leaf));
    }
 

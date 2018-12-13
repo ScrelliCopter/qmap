@@ -34,8 +34,8 @@ void run_sim(void)
    char text[256];
    camera cam;
 
-   scr_buf = malloc(320*200);
-   scr_row = 320;
+   scr_buf = malloc(SCREENW * SCREENH);
+   scr_row = SCREENW;
    qmap_set_output(scr_buf, scr_row);
 
    cam_init(&cam);

@@ -39,7 +39,7 @@ void setup_sdl(void)
    init = 1;
    
    winpos = SDL_WINDOWPOS_CENTERED_DISPLAY(0);
-   window = SDL_CreateWindow("qmap", winpos, winpos, 320, 200, SDL_WINDOW_RESIZABLE);
+   window = SDL_CreateWindow("qmap", winpos, winpos, SCREENW, SCREENH, SDL_WINDOW_RESIZABLE);
    if (!window)
       fatal("Couldn't create window");
    
@@ -47,11 +47,11 @@ void setup_sdl(void)
    if (!renderer)
       fatal("Couldn't open graphics interface");
    
-   framebuffer = SDL_CreateRGBSurfaceWithFormat(0, 320, 200, 32, SDL_PIXELFORMAT_ABGR8888);
+   framebuffer = SDL_CreateRGBSurfaceWithFormat(0, SCREENW, SCREENH, 32, SDL_PIXELFORMAT_ABGR8888);
    if (!framebuffer)
       fatal("Couldn't allocate software framebuffer");
    
-   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 320, 200);
+   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREENW, SCREENH);
    if (!texture)
       fatal("Couldn't allocate gpu framebuffer");
    
@@ -122,11 +122,11 @@ void blit(char *src)
    uchar *linesrc;
    SDL_Colour *dst;
    
-   for (i=0; i < 200; ++i) {
+   for (i=0; i < SCREENH; ++i) {
       dst = (SDL_Colour*)((char*)framebuffer->pixels + i * framebuffer->pitch);
-      linesrc = (uchar*)src + i * 320;
+      linesrc = (uchar*)src + i * SCREENW;
       
-      for (j=0; j < 320; ++j) {
+      for (j=0; j < SCREENW; ++j) {
          (*dst++) = palette[(*linesrc++)];
       }
    }
