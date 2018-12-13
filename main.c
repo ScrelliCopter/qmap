@@ -26,7 +26,7 @@ double chop_temp;
 char *scr_buf;
 int   scr_row;
 
-char colormap[64][256];
+uchar colormap[64][256];
 
 void run_sim(void)
 {

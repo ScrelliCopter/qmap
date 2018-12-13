@@ -159,11 +159,10 @@ void get_tmap(bitmap *bm, int face, int tex, int ml, float *u, float *v)
 // compute one lightmap square of surface
 void build_block(char *out, bitmap *raw, int x, int y)
 {
-   extern char colormap[][256];
    fix c,dc;
    int a,b,h,c0,c1,c2,c3, step = global_step, row = global_row - step;
    int y_max = raw->ht, x_max = raw->wid;
-   char *s = raw->bits + y*raw->wid;
+   uchar *s = (uchar*)raw->bits + y*raw->wid;
 
    c0 = (255 - light_index[0]) << 16;
    c1 = (255 - light_index[1]) << 16;
@@ -188,7 +187,7 @@ void build_block(char *out, bitmap *raw, int x, int y)
 
       if (++y == y_max) {
           y = 0;
-          s = raw->bits;
+          s = (uchar*)raw->bits;
       } else
          s += raw->wid;
    }
