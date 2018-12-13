@@ -6,7 +6,6 @@
  */
 
 #include <SDL_scancode.h>
-#include <SDL_timer.h>
 #include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
@@ -18,6 +17,7 @@
 #include "bsp.h"
 #include "surface.h"
 #include "poly.h"
+#include "clock.h"
 #include "text.h"
 
 double chop_temp;
@@ -27,32 +27,6 @@ angvec cam_ang, cam_angvel;
 
 char *scr_buf;
 int   scr_row;
-
-#define FPS_SMOOTH 128
-int fpsbuf[FPS_SMOOTH];
-int fpsidx, prevtime;
-
-void fps_init()
-{
-   fpsidx = 0;
-   prevtime = SDL_GetTicks();
-   memset(fpsbuf, 0, sizeof(fpsbuf));
-}
-
-float fps_tick()
-{
-   int i, curtime, total;
-   
-   curtime = SDL_GetTicks();
-   fpsbuf[fpsidx] = curtime - prevtime;
-   fpsidx = (fpsidx + 1) % FPS_SMOOTH;
-   prevtime = curtime;
-   
-   total = 0;
-   for (i=0; i < FPS_SMOOTH; ++i)
-      total += fpsbuf[i];
-   return 1000.0f / ((float)total / (float)FPS_SMOOTH);
-}
 
 #define ANG_MXVL 256
 #define ANG_ACCL 12
@@ -68,8 +42,7 @@ char colormap[64][256];
 void run_sim(void)
 {
    bool running = TRUE;
-   int i, mx, my;
-   float fps;
+   int mx, my;
    vector temp;
    char text[256];
 
@@ -82,8 +55,8 @@ void run_sim(void)
    cam_loc.z = 100;
 
    while (running) {
-      
-      fps = fps_tick();
+   
+      clock_tick();
 
       // RENDER
 
@@ -247,7 +220,7 @@ int main(int argc, char **argv)
       load_graphics();
       init_cache();
       setup_default_point_list();
-      fps_init();
+      clock_init();
       
       run_sim();
       close_sdl();
