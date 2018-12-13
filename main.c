@@ -19,49 +19,36 @@
 #include "poly.h"
 #include "clock.h"
 #include "text.h"
+#include "cam.h"
 
 double chop_temp;
 
-vector cam_loc, cam_vel, new_loc;
-angvec cam_ang, cam_angvel;
-
 char *scr_buf;
 int   scr_row;
-
-#define ANG_MXVL 256
-#define ANG_ACCL 12
-#define ANG_FRCT 6
-#define VEL_MXVL 2.0f
-#define VEL_ACCL 0.1f
-#define VEL_FRCT 0.05f
-
-#define MOUSE_SENS 6
 
 char colormap[64][256];
 
 void run_sim(void)
 {
    bool running = TRUE;
-   int mx, my;
-   vector temp;
    char text[256];
+   camera cam;
 
    scr_buf = malloc(320*200);
    scr_row = 320;
    qmap_set_output(scr_buf, scr_row);
 
-   cam_loc.x = 500;
-   cam_loc.y = 240;
-   cam_loc.z = 100;
+   cam_init(&cam);
+   cam.loc.x = 500;
+   cam.loc.y = 240;
+   cam.loc.z = 100;
 
    while (running) {
-   
-      clock_tick();
 
       // RENDER
 
-      set_view_info(&cam_loc, &cam_ang);
-      render_world(&cam_loc);
+      set_view_info(&cam.loc, &cam.ang);
+      render_world(&cam.loc);
       blit(scr_buf);
 
       // UI
@@ -71,127 +58,16 @@ void run_sim(void)
       
       present();
       
-      // CONTROLS
+      // INPUT
 
       poll_events(&running);
-      
       if (get_key(SDL_SCANCODE_ESCAPE))
-         running = false;
-
-      if (get_key(SDL_SCANCODE_UP))
-         cam_angvel.tx += ANG_ACCL;
-      if (get_key(SDL_SCANCODE_DOWN))
-         cam_angvel.tx -= ANG_ACCL;
-      if (get_key(SDL_SCANCODE_Q))
-         cam_angvel.ty += ANG_ACCL;
-      if (get_key(SDL_SCANCODE_E))
-         cam_angvel.ty -= ANG_ACCL;
-      if (get_key(SDL_SCANCODE_RIGHT))
-         cam_angvel.tz += ANG_ACCL;
-      if (get_key(SDL_SCANCODE_LEFT))
-         cam_angvel.tz -= ANG_ACCL;
-
-      if (get_key(SDL_SCANCODE_D))
-         cam_vel.x += VEL_ACCL;
-      if (get_key(SDL_SCANCODE_A))
-         cam_vel.x -= VEL_ACCL;
-      if (get_key(SDL_SCANCODE_LSHIFT))
-         cam_vel.z -= VEL_ACCL;
-      if (get_key(SDL_SCANCODE_SPACE))
-         cam_vel.z += VEL_ACCL;
-      if (get_key(SDL_SCANCODE_S))
-         cam_vel.y -= VEL_ACCL;
-      if (get_key(SDL_SCANCODE_W))
-         cam_vel.y += VEL_ACCL;
-
-      // "PHYSICS"
+		   running = false;
       
-      cam_vel.x = CLAMP(cam_vel.x, -VEL_MXVL, VEL_MXVL);
-      cam_vel.y = CLAMP(cam_vel.y, -VEL_MXVL, VEL_MXVL);
-      cam_vel.z = CLAMP(cam_vel.z, -VEL_MXVL, VEL_MXVL);
+      // LOGIC
       
-      cam_angvel.tx = (fixang)CLAMP((short)cam_angvel.tx, -ANG_MXVL, ANG_MXVL);
-      cam_angvel.ty = (fixang)CLAMP((short)cam_angvel.ty, -ANG_MXVL, ANG_MXVL);
-      cam_angvel.tz = (fixang)CLAMP((short)cam_angvel.tz, -ANG_MXVL, ANG_MXVL);
-
-      cam_ang.tx += cam_angvel.tx;
-      cam_ang.ty += cam_angvel.ty;
-      cam_ang.tz += cam_angvel.tz;
-      
-      if (get_mmove(&mx, &my)) {
-         cam_ang.tz += mx * MOUSE_SENS;
-         cam_ang.tx += my * MOUSE_SENS;
-      }
-      
-      set_view_info(&cam_loc, &cam_ang);
-
-      temp.x = cam_vel.x; temp.y = 0; temp.z = 0;
-      rotate_vec(&temp);
-      cam_loc.x  += temp.x; cam_loc.y += temp.y; cam_loc.z += temp.z;
-
-      temp.x = 0; temp.y = cam_vel.y; temp.z = 0;
-      rotate_vec(&temp);
-      cam_loc.x  += temp.x; cam_loc.y += temp.y; cam_loc.z += temp.z;
-
-      temp.x = 0; temp.y = 0; temp.z = cam_vel.z;
-      rotate_vec(&temp);
-      cam_loc.x  += temp.x; cam_loc.y += temp.y; cam_loc.z += temp.z;
-      
-      if (cam_vel.x > 0.0f) {
-         cam_vel.x -= VEL_FRCT;
-         if (cam_vel.x < 0.0f)
-            cam_vel.x = 0.0f;
-      } else if (cam_vel.x < 0.0f) {
-         cam_vel.x += VEL_FRCT;
-         if (cam_vel.x > 0.0f)
-            cam_vel.x = 0.0f;
-      }
-      if (cam_vel.y > 0.0f) {
-         cam_vel.y -= VEL_FRCT;
-         if (cam_vel.y < 0.0f)
-            cam_vel.y = 0.0f;
-      } else if (cam_vel.y < 0.0f) {
-         cam_vel.y += VEL_FRCT;
-         if (cam_vel.y > 0.0f)
-            cam_vel.y = 0.0f;
-      }
-      if (cam_vel.z > 0.0f) {
-         cam_vel.z -= VEL_FRCT;
-         if (cam_vel.z < 0.0f)
-            cam_vel.z = 0.0f;
-      } else if (cam_vel.z < 0.0f) {
-         cam_vel.z += VEL_FRCT;
-         if (cam_vel.z > 0.0f)
-            cam_vel.z = 0.0f;
-      }
-      
-      if ((short)cam_angvel.tx > 0) {
-         cam_angvel.tx -= ANG_FRCT;
-         if ((short)cam_angvel.tx < 0)
-            cam_angvel.tx = 0;
-      } else if ((short)cam_angvel.tx < 0) {
-         cam_angvel.tx += ANG_FRCT;
-         if ((short)cam_angvel.tx > 0)
-            cam_angvel.tx = 0;
-      }
-      if ((short)cam_angvel.ty > 0) {
-         cam_angvel.ty -= ANG_FRCT;
-         if ((short)cam_angvel.ty < 0)
-            cam_angvel.ty = 0;
-      } else if ((short)cam_angvel.ty < 0) {
-         cam_angvel.ty += ANG_FRCT;
-         if ((short)cam_angvel.ty > 0)
-            cam_angvel.ty = 0;
-      }
-      if ((short)cam_angvel.tz > 0) {
-         cam_angvel.tz -= ANG_FRCT;
-         if ((short)cam_angvel.tz < 0)
-            cam_angvel.tz = 0;
-      } else if ((short)cam_angvel.tz < 0) {
-         cam_angvel.tz += ANG_FRCT;
-         if ((short)cam_angvel.tz > 0)
-            cam_angvel.tz = 0;
-      }
+      clock_tick();
+      cam_update(&cam);
    }
    
    free(scr_buf);

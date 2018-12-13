@@ -22,6 +22,7 @@ set(SOURCES
 	tm.h
 	text.h
 	clock.h
+	cam.h
 
 	main.c
 	clippoly.c
@@ -35,6 +36,7 @@ set(SOURCES
 	tm_c.c
 	surface.c
 	clock.c
+	cam.c
 	iso_font.c)
 
 add_executable(qmap ${SOURCES})
