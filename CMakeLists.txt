@@ -3,7 +3,7 @@ project(qmap)
 
 if (NOT EMSCRIPTEN)
 	find_package(SDL2 REQUIRED)
-	add_definitions(${SDL2_CFLAGS})
+	add_definitions(${SDL2_CFLAGS} -Wall -Wextra)
 	include_directories(${SDL2_INCLUDE_DIRS})
 	set(LIBS ${SDL2_LIBRARIES} m)
 else()

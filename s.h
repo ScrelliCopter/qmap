@@ -1,6 +1,8 @@
 #ifndef INC_S_H
 #define INC_S_H
 
+#include "fix.h"
+
 typedef unsigned char uchar;
 typedef unsigned int uint;
 typedef unsigned long ulong;
@@ -8,7 +10,7 @@ typedef unsigned short ushort;
 typedef int bool;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef long int32;
+typedef int int32;
 
 #define FALSE 0
 #define TRUE  1
@@ -21,12 +23,34 @@ typedef long int32;
 // than built-in Intel ops, but doesn't obey rounding rule and
 // doesn't deal well with overflow
 
-extern double chop_temp;
-#define FLOAT_TO_INT(x)  ((chop_temp = (x) + BIG_NUM), *(int*)(&chop_temp))
-#define FLOAT_TO_FIX(x)  \
-             ((chop_temp = (x) + BIG_NUM/65536.0), *(int*)(&chop_temp))
+#if 1
 
-#define BIG_NUM     ((float) (1 << 26) * (1 << 26) * 1.5)
+#define BIG_NUM ((float) (1 << 26) * (1 << 26) * 1.5)
+
+static inline int FLOAT_TO_INT(double x)
+{
+	double temp = x + BIG_NUM;
+	return *(int*)&temp;
+}
+static inline fix FLOAT_TO_FIX(double x)
+{
+	double temp = x + BIG_NUM / 65536.0;
+	return *(int*)&temp;
+}
+
+#else
+
+static inline int FLOAT_TO_INT(double x)
+{
+	return (int)x;
+}
+
+static inline fix FLOAT_TO_FIX(double x)
+{
+	return (fix)(x * 65536.0);
+}
+
+#endif
 
 extern void fatal_error(char *message, char *file, int line);
 #define fatal(s)   fatal_error(s, __FILE__, __LINE__)

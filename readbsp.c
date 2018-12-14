@@ -507,9 +507,9 @@ int CopyLump (int lump, void *dest, int size)
 LoadBSPFile
 =============
 */
-void   LoadBSPFile (char *filename)
+void LoadBSPFile (char *filename)
 {
-   int         i;
+   size_t i;
    
 //
 // load the file header
@@ -517,12 +517,12 @@ void   LoadBSPFile (char *filename)
    LoadFile (filename, (void **)&header);
 
 // swap the header
-   for (i=0 ; i< sizeof(dheader_t)/4 ; i++)
+   for (i=0 ; i < (sizeof(dheader_t)/4); i++)
       ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
    if (header->version != BSPVERSION) {
       printf("******* WARNING ********\n");
-      printf("%s is version %i, not %i", filename, i, BSPVERSION);
+      printf("%s is version %i, not %i", filename, header->version, BSPVERSION);
    }
 
    nummodels = CopyLump (LUMP_MODELS, dmodels, sizeof(dmodel_t));

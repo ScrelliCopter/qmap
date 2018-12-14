@@ -63,14 +63,14 @@ static vector cam_loc;
 
 static fix clip_x_low, clip_x_high, clip_y_low, clip_y_high;
 
-const static float proj_scale = 160.0f;
+static const float proj_scale = 160.0f;
 float proj_ymod = 1.0f;
 
-const static float xcenter = 159.5;
-const static float ycenter = 99.5;
+static const float xcenter = 159.5;
+static const float ycenter = 99.5;
 
-const static float near_clip = 0.01;
-const static float near_code = 16.0;
+static const float near_clip = 0.01;
+static const float near_code = 16.0;
 
 double clip_scale_x, clip_scale_y;
 

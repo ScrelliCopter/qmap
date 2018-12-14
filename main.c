@@ -25,8 +25,6 @@
 #include "text.h"
 #include "cam.h"
 
-double chop_temp;
-
 char *scr_buf;
 int   scr_row;
 
