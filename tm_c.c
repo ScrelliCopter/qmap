@@ -12,12 +12,14 @@
 #include "s.h"
 #include "fix.h"
 #include "tm.h"
+#include "mode.h"
 
 char  *qmap_buf,    *qmap_tex;
 int    qmap_buf_row, qmap_tex_row;
 int    qmap_wid, qmap_ht;
 
-int    qmap_row_table[768];      // max height of screen
+#define NUMROWS (768)
+int    qmap_row_table[NUMROWS];      // max height of screen
 int    qmap_tex_row_table[258];  // max height of texture + 2
 
 static double qmap_tmap[9];
@@ -68,7 +70,7 @@ void qmap_draw_span(int y, int sx, int ex)
    u0 = u0 * z;
    v0 = v0 * z;
 
-#ifdef CLAMP
+#ifdef CLAMPING
    // if you turn on clamping, you have to change qmap_wid & qmap_ht
    // back to being wid&ht, not wid-1 & ht-1 as they are right now
    if (u0 < 0) u0 = 0; else if (u0 >= qmap_wid) u0 = qmap_wid-0.01;
@@ -101,7 +103,7 @@ void qmap_draw_span(int y, int sx, int ex)
       u1 = u1 * z;
       v1 = v1 * z;
 
-#ifdef CLAMP
+#ifdef CLAMPING
       if (u1 < 0) u1 = 0; else if (u1 >= qmap_wid) u1 = qmap_wid-0.01;
       if (v1 < 0) v1 = 0; else if (v1 >= qmap_ht) v1 = qmap_ht-0.01;
 #endif
@@ -134,7 +136,7 @@ void qmap_set_output(char *where, int row)
    if (qmap_buf_row != row) {
       int i;
       qmap_buf_row = row;
-      for (i=0; i < 768; ++i)
+      for (i=0; i < NUMROWS; ++i)
          qmap_row_table[i] = i * row;
    }
 }
