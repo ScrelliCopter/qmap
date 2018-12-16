@@ -67,6 +67,7 @@ void run_sim(void)
    running = TRUE;
 
    scr_buf = malloc(SCREENW * SCREENH);
+   memset(scr_buf, 0, SCREENW * SCREENH);
    scr_row = SCREENW;
    qmap_set_output(scr_buf, scr_row);
 

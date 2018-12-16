@@ -11,6 +11,7 @@
 #include "bspfile.h"
 #include "tmap3d.h"
 #include "tm.h"
+#include "mode.h"
 
 #define DIST  256.0    // dist to switch first mip level
 #define DIST2 (DIST*DIST)
@@ -142,9 +143,12 @@ void compute_texture_gradients(int face, int tex, int mip, float u, float v)
 
       // offset by center of screen--if this were folded into
       // transform translation we could avoid it
-   tmap_data[0] -= tmap_data[1]*159.5 + tmap_data[2]*99.5;
-   tmap_data[3] -= tmap_data[4]*159.5 + tmap_data[5]*99.5;
-   tmap_data[6] -= tmap_data[7]*159.5 + tmap_data[8]*99.5;
+   const double xofs = (double)SCREENW / 2.0 - 0.5;
+   const double yofs = (double)SCREENH / 2.0 - 0.5;
+   
+   tmap_data[0] -= tmap_data[1] * xofs + tmap_data[2] * yofs;
+   tmap_data[3] -= tmap_data[4] * xofs + tmap_data[5] * yofs;
+   tmap_data[6] -= tmap_data[7] * xofs + tmap_data[8] * yofs;
      
    tmap_data[0] *= rescale;
    tmap_data[1] *= rescale;

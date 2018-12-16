@@ -9,6 +9,7 @@
 #include <string.h>
 #include "3d.h"
 #include "bspfile.h"
+#include "mode.h"
 
 double dot_vec_dbl(double *a, vector *b)
 {
@@ -63,11 +64,14 @@ static vector cam_loc;
 
 static fix clip_x_low, clip_x_high, clip_y_low, clip_y_high;
 
-static const float proj_scale = 160.0f;
+static const float halfscreenw = (float)SCREENW / 2.0f;
+static const float halfscreenh = (float)SCREENH / 2.0f;
+
+static const float proj_scale = halfscreenw;
 float proj_ymod = 1.0f;
 
-static const float xcenter = 159.5;
-static const float ycenter = 99.5;
+static const float xcenter = halfscreenw - 0.5f;
+static const float ycenter = halfscreenh - 0.5f;
 
 static const float near_clip = 0.01;
 static const float near_code = 16.0;
@@ -80,12 +84,12 @@ void set_view_info(vector *loc, angvec *ang)
    cam_loc = *loc;
 
    clip_x_low = -0x8000;
-   clip_x_high = fix_make(320,0)-0x8000;
+   clip_x_high = fix_make(SCREENW, 0)-0x8000;
    clip_y_low = -0x8000;
-   clip_y_high = fix_make(200,0)-0x8000;
+   clip_y_high = fix_make(SCREENH, 0)-0x8000;
 
-   clip_scale_x = 1 / 160.0;
-   clip_scale_y = 1 / 100.0;
+   clip_scale_x = 1.0 / halfscreenw;
+   clip_scale_y = 1.0 / halfscreenh;
 
    // compute rotation matrix
    memset(view_matrix, 0, sizeof(view_matrix));
