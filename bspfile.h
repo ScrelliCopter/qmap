@@ -17,7 +17,7 @@
 // orig values
 #define   MAX_MAP_NODES      32767      // because negative shorts are contents
 #define   MAX_MAP_CLIPNODES   32767      //
-#define   MAX_MAP_LEAFS      32767      // 
+#define   MAX_MAP_LEAFS      32767      //
 #define   MAX_MAP_VERTS      65535
 #define   MAX_MAP_FACES      65535
 #define   MAX_MAP_MARKSURFACES 65535
@@ -52,6 +52,12 @@
 
 
 #define BSPVERSION   29
+
+// RMQ support (2PSB). 32bits instead of shorts for all but bbox sizes (which still use shorts)
+#define BSP2VERSION_2PSB (('B' << 24) | ('S' << 16) | ('P' << 8) | '2')
+
+// BSP2 support. 32bits instead of shorts for everything (bboxes use floats)
+#define BSP2VERSION_BSP2 (('B' << 0) | ('S' << 8) | ('P' << 16) | ('2'<<24))
 
 typedef struct
 {

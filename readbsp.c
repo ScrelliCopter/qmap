@@ -520,9 +520,18 @@ void LoadBSPFile (char *filename)
    for (i=0 ; i < (sizeof(dheader_t)/4); i++)
       ((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
-   if (header->version != BSPVERSION) {
-      printf("******* WARNING ********\n");
-      printf("%s is version %i, not %i", filename, header->version, BSPVERSION);
+   switch (header->version) {
+   case BSPVERSION:
+      break;
+   case BSP2VERSION_2PSB:
+      Error("RMQ format maps are not supported");
+      break;
+   case BSP2VERSION_BSP2:
+      Error("BSP2 format maps are not supported");
+      break;
+   default:
+      Error("%s is version %i, not %i", filename, header->version, BSPVERSION);
+      break;
    }
 
    nummodels = CopyLump (LUMP_MODELS, dmodels, sizeof(dmodel_t));
