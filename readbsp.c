@@ -202,13 +202,13 @@ int    BigLong (int l)
 float   LittleFloat (float l)
 {
    union {byte b[4]; float f;} in, out;
-   
+
    in.f = l;
    out.b[0] = in.b[3];
    out.b[1] = in.b[2];
    out.b[2] = in.b[1];
    out.b[3] = in.b[0];
-   
+
    return out.f;
 }
 
@@ -257,13 +257,13 @@ int    LittleLong (int l)
 float   BigFloat (float l)
 {
    union {byte b[4]; float f;} in, out;
-   
+
    in.f = l;
    out.b[0] = in.b[3];
    out.b[1] = in.b[2];
    out.b[2] = in.b[1];
    out.b[3] = in.b[0];
-   
+
    return out.f;
 }
 
@@ -338,8 +338,8 @@ void SwapBSPFile (qboolean todisk)
    dmodel_t      *d;
    dmiptexlump_t   *mtl;
 
-   
-// models   
+
+// models
    for (i=0 ; i<nummodels ; i++)
    {
       d = &dmodels[i];
@@ -350,7 +350,7 @@ void SwapBSPFile (qboolean todisk)
       d->visleafs = LittleLong (d->visleafs);
       d->firstface = LittleLong (d->firstface);
       d->numfaces = LittleLong (d->numfaces);
-      
+
       for (j=0 ; j<3 ; j++)
       {
          d->mins[j] = LittleFloat(d->mins[j]);
@@ -367,10 +367,10 @@ void SwapBSPFile (qboolean todisk)
       for (j=0 ; j<3 ; j++)
          dvertexes[i].point[j] = LittleFloat (dvertexes[i].point[j]);
    }
-      
+
 //
 // planes
-//   
+//
    for (i=0 ; i<numplanes ; i++)
    {
       for (j=0 ; j<3 ; j++)
@@ -378,10 +378,10 @@ void SwapBSPFile (qboolean todisk)
       dplanes[i].dist = LittleFloat (dplanes[i].dist);
       dplanes[i].type = LittleLong (dplanes[i].type);
    }
-   
+
 //
 // texinfos
-//   
+//
    for (i=0 ; i<numtexinfo ; i++)
    {
       for (j=0 ; j<8 ; j++)
@@ -389,7 +389,7 @@ void SwapBSPFile (qboolean todisk)
       texinfo[i].miptex = LittleLong (texinfo[i].miptex);
       texinfo[i].flags = LittleLong (texinfo[i].flags);
    }
-   
+
 //
 // faces
 //
@@ -461,7 +461,7 @@ void SwapBSPFile (qboolean todisk)
       for (i=0 ; i<c ; i++)
          mtl->dataofs[i] = LittleLong(mtl->dataofs[i]);
    }
-   
+
 //
 // marksurfaces
 //
@@ -493,10 +493,10 @@ int CopyLump (int lump, void *dest, int size)
 
    length = header->lumps[lump].filelen;
    ofs = header->lumps[lump].fileofs;
-   
+
    if (length % size)
       Error ("LoadBSPFile: odd lump size");
-   
+
    memcpy (dest, (byte *)header + ofs, length);
 
    return length / size;
@@ -510,7 +510,7 @@ LoadBSPFile
 void LoadBSPFile (char *filename)
 {
    size_t i;
-   
+
 //
 // load the file header
 //
@@ -552,9 +552,9 @@ void LoadBSPFile (char *filename)
    entdatasize = CopyLump (LUMP_ENTITIES, dentdata, 1);
 
    free (header);      // everything has been copied out
-      
+
 //
 // swap everything
-//   
+//
    SwapBSPFile (false);
 }

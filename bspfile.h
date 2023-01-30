@@ -31,7 +31,7 @@
   // my values
 #define   MAX_MAP_NODES      10000      // because negative shorts are contents
 #define   MAX_MAP_CLIPNODES  10000      //
-#define   MAX_MAP_LEAFS      10001      // 
+#define   MAX_MAP_LEAFS      10001      //
 #define   MAX_MAP_VERTS      30000
 #define   MAX_MAP_FACES      30000
 #define   MAX_MAP_MARKSURFACES 30000
@@ -93,7 +93,7 @@ typedef struct
 
 typedef struct
 {
-   int         version;   
+   int         version;
    lump_t      lumps[HEADER_LUMPS];
 } dheader_t;
 
@@ -184,7 +184,7 @@ typedef struct
    short      side;
 
    int         firstedge;      // we must support > 64k edges
-   short      numedges;   
+   short      numedges;
    short      texinfo;
 
 // lighting info

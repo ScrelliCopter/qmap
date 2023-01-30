@@ -29,25 +29,25 @@ typedef int int32;
 
 static inline int FLOAT_TO_INT(double x)
 {
-	double temp = x + BIG_NUM;
-	return *(int*)&temp;
+   double temp = x + BIG_NUM;
+   return *(int*)&temp;
 }
 static inline fix FLOAT_TO_FIX(double x)
 {
-	double temp = x + BIG_NUM / 65536.0;
-	return *(int*)&temp;
+   double temp = x + BIG_NUM / 65536.0;
+   return *(int*)&temp;
 }
 
 #else
 
 static inline int FLOAT_TO_INT(double x)
 {
-	return (int)x;
+   return (int)x;
 }
 
 static inline fix FLOAT_TO_FIX(double x)
 {
-	return (fix)(x * 65536.0);
+   return (fix)(x * 65536.0);
 }
 
 #endif

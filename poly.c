@@ -73,7 +73,7 @@ void draw_poly(int n, point_3d **vl)
            if (vl[i]->sy < ymin) ymin = vl[i]->sy;
       else if (vl[i]->sy > ymax) ymax = vl[i]->sy;
    }
-   
+
    // scan out each edge
    j = n-1;
    for (i=0; i < n; ++i) {

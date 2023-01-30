@@ -16,23 +16,23 @@ int fpsidx, prevtime;
 
 void clock_init(void)
 {
-	fpsidx = 0;
+   fpsidx = 0;
    prevtime = SDL_GetTicks();
    memset(fpsbuf, 0, sizeof(fpsbuf));
 }
 
 void clock_tick(void)
 {
-	int i, curtime, diff, total;
-   
+   int i, curtime, diff, total;
+
    curtime = SDL_GetTicks();
    diff = curtime - prevtime;
    fpsidx = (fpsidx + 1) % FPS_SMOOTH;
    prevtime = curtime;
-   
+
    // compute deltatime
    delta = (float)diff / 1000.0f;
-   
+
    // compute average FPS
    fpsbuf[fpsidx] = diff;
    total = 0;

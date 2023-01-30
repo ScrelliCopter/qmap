@@ -33,7 +33,7 @@ camera cam;
 void sim_loop(void)
 {
    char text[256];
-   
+
    // RENDER
 
    set_view_info(&cam.loc, &cam.ang);
@@ -41,20 +41,20 @@ void sim_loop(void)
    blit(scr_buf);
 
    // UI
-   
+
    snprintf(text, sizeof(text), "FPS: %.2f", fps);
    draw_text(8, 6, text);
-   
+
    present();
-   
+
    // INPUT
 
    poll_events(&running);
    if (get_key(SDL_SCANCODE_ESCAPE))
       running = false;
-   
+
    // LOGIC
-   
+
    clock_tick();
    cam_update(&cam);
 }
@@ -78,7 +78,7 @@ void run_sim(void)
 #else
    while (running) sim_loop();
 #endif
-   
+
    free(scr_buf);
 }
 
@@ -100,8 +100,8 @@ void load_graphics(void)
 int main(int argc, char **argv)
 {
 #ifdef EMSCRIPTEN
-	{
-		LoadBSPFile("e1m1.bsp");
+   {
+      LoadBSPFile("e1m1.bsp");
 #else
    if (argc != 2) {
       printf("Usage: qmap <bspfile>\n");
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
       init_cache();
       setup_default_point_list();
       clock_init();
-      
+
       run_sim();
       close_sdl();
    }

@@ -1,6 +1,6 @@
 /*  QMAP: Quake level viewer
  *
- *   render.c  Copyright 1997 Sean Barrett 
+ *   render.c  Copyright 1997 Sean Barrett
  *
  *   "render" scenes by traversing over the
  *   database, marking already-visited things,
@@ -93,7 +93,7 @@ int visit_visible_leaves(vector *cam_loc)
       return 0;
 
    v = dleafs[n].visofs;
-   for (i = 1; i < numleafs; ) { 
+   for (i = 1; i < numleafs; ) {
       if (dvisdata[v] == 0) {
          i += 8 * dvisdata[v+1];    // skip some leaves
          v+=2;

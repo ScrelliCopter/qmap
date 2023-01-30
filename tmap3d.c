@@ -58,7 +58,7 @@ void get_face_extent(int face, int *u0, int *v0, int *u1, int *v1)
       } else if (uv[i][0] > umax) {
          umax = uv[i][0];
       }
-      
+
       if (uv[i][1] < vmin) {
          vmin = uv[i][1];
       } else if (uv[i][1] > vmax) {
@@ -143,11 +143,11 @@ void compute_texture_gradients(int face, int tex, int mip, float u, float v)
       // transform translation we could avoid it
    const double xofs = (double)SCREENW / 2.0 - 0.5;
    const double yofs = (double)SCREENH / 2.0 - 0.5;
-   
+
    tmap_data[0] -= tmap_data[1] * xofs + tmap_data[2] * yofs;
    tmap_data[3] -= tmap_data[4] * xofs + tmap_data[5] * yofs;
    tmap_data[6] -= tmap_data[7] * xofs + tmap_data[8] * yofs;
-     
+
    tmap_data[0] *= rescale;
    tmap_data[1] *= rescale;
    tmap_data[2] *= rescale;

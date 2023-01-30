@@ -115,7 +115,7 @@ void qmap_draw_span(int y, int sx, int ex)
       if (dv < 0) ++dv;
 
       qmap_draw_affine(len, qmap_buf + qmap_row_table[y] + sx, u, v, du, dv);
-      if (last) 
+      if (last)
          break;
 
       sx += len;
