@@ -1,8 +1,5 @@
-/* QMAP: Quake level viewer
- *
- *   3d.c  Copyright 1997 Sean Barrett
- *
- *   general 3d math
+/* 3d.c - general 3d math
+ *   Copyright 1997 Sean Barrett (Public domain)
  */
 
 #include <math.h>

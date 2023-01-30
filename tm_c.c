@@ -1,12 +1,8 @@
-/* QMAP: Quake level viewer
- *
- * tm_c.c  Copyright 1997 Sean Barrett
- *
- * Texture mapper in C
- *
+/* tm_c.c - Texture mapper in C
  *   takes any size texture map, renders
  *   it point-sampled with no lighting
  *
+ *   Copyright 1997 Sean Barrett
  */
 
 #include "s.h"

@@ -1,8 +1,5 @@
-/*  QMAP: Quake level viewer
- *
- *   main.c    Copyright 1997 Sean Barett
- *
- *   General setup control, main "sim" loop
+/* main.c - General setup control, main "sim" loop
+ *   Copyright 1997 Sean Barett (Public domain)
  */
 
 #ifdef __EMSCRIPTEN__

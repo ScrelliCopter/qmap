@@ -1,14 +1,12 @@
-/*  QMAP: Quake level viewer
- *
- *   poly.c    Copyright 1997 Sean Barett
- *
- *   Render a Quake polygon:
+/* poly.c - Render a Quake polygon:
  *      read it from the db
  *      transform it into 3d
  *      clip it in 3d
  *      compute the 2d texture gradients
  *      scan convert
  *      pass off the spans
+ *
+ *   Copyright 1997 Sean Barett (Public domain)
  */
 
 #include "bspfile.h"

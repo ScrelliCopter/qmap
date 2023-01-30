@@ -1,9 +1,7 @@
-/* QMAP: Quake level viewer
+/* tmap3d.c - compute texture-mapping info that has to
+ *   look at stuff in 3d: mipmapping, texture gradient
  *
- *   tmap3d.c   Copyright 1997 Sean Barrett
- *
- *  compute texture-mapping info that has to
- *  look at stuff in 3d: mipmapping, texture gradient
+ *   Copyright 1997 Sean Barrett
  */
 
 #include <math.h>

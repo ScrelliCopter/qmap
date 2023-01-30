@@ -1,8 +1,5 @@
-/* QMAP: Quake level viewer
- *
- *    clippoly.c   Copyright 1997 Sean Barrett
- *
- *    clip polygon to view frustrum, in viewspace
+/* clippoly.c - clip polygon to view frustrum, in viewspace
+ *   Copyright 1997 Sean Barrett
  */
 
 #include "3d.h"

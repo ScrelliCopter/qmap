@@ -1,9 +1,7 @@
-/*  QMAP: Quake level viewer
+/* surface.c - Build surfaces and cache them
+ *   The cache is moronic, using malloc
  *
- *   surface.c   Copyright 1997 Sean Barrett
- *
- *  Build surfaces and cache them
- *  The cache is moronic, using malloc
+ *   Copyright 1997 Sean Barrett (Public domain)
  */
 
 #include <stdlib.h>

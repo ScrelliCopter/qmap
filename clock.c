@@ -1,9 +1,6 @@
-/*  QMAP: Quake level viewer
- *
- *   clock.c   Copyright 2018 Nicholas Curtis
- *
- *   General setup control, main "sim" loop
- */
+/* clock.c
+ *   Copyright (C) 2018 a dinosaur (0BSD)
+*/
 
 #include <SDL_timer.h>
 #include <string.h>

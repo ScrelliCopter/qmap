@@ -1,8 +1,5 @@
-/* QMAP: Quake level viewer
- *
- *    bsp.c   Copyright 1997 Sean Barrett
- *
- *    routines that recurse through bsp tree
+/* bsp.c - routines that recurse through bsp tree
+ *   Copyright 1997 Sean Barrett (Public domain)
  */
 
 #include "bspfile.h"

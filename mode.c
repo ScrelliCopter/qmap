@@ -1,13 +1,11 @@
-/* QMAP: Quake level viewer
- *
- *   mode.c    Copyright 1997 Sean Barett
- *             Copyright 2018 Nicholas Curtis
- *
- *   General screen functions (set graphics
+/*  mode.c - General screen functions (set graphics
  *   mode, blit to framebuffer, set palette)
  *
  *   Updated to replace old dos functionality
  *   with modern SDL2 equivalents
+ *
+ *   Copyright 1997 Sean Barett (Public domain)
+ *   Copyright 2018 a-dinosaur (0BSD)
  */
 
 #include <SDL.h>
