@@ -275,7 +275,5 @@ extern   int         dsurfedges[MAX_MAP_SURFEDGES];
 
 
 void   LoadBSPFile (char *filename);
-void   WriteBSPFile (char *filename);
-void   PrintBSPFileSizes (void);
 
 #endif

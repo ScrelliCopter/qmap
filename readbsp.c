@@ -17,17 +17,6 @@
 // cmdlib.c
 
 #include <sys/types.h>
-#include <sys/stat.h>
-
-#ifdef WIN32
-#include <direct.h>
-#endif
-
-#ifdef NeXT
-#include <libc.h>
-#endif
-
-#define PATHSEPERATOR   '/'
 
 /*
 =================
@@ -69,18 +58,6 @@ int filelength (FILE *f)
 }
 
 
-FILE *SafeOpenWrite (char *filename)
-{
-   FILE   *f;
-
-   f = fopen(filename, "wb");
-
-   if (!f)
-      Error ("Error opening %s: %s",filename,strerror(errno));
-
-   return f;
-}
-
 FILE *SafeOpenRead (char *filename)
 {
    FILE   *f;
@@ -97,13 +74,6 @@ FILE *SafeOpenRead (char *filename)
 void SafeRead (FILE *f, void *buffer, int count)
 {
    if (fread (buffer, 1, count, f) != (size_t)count)
-      Error ("File read failure");
-}
-
-
-void SafeWrite (FILE *f, void *buffer, int count)
-{
-   if (fwrite (buffer, 1, count, f) != (size_t)count)
       Error ("File read failure");
 }
 
@@ -129,21 +99,6 @@ int    LoadFile (char *filename, void **bufferptr)
 
    *bufferptr = buffer;
    return length;
-}
-
-
-/*
-==============
-SaveFile
-==============
-*/
-void    SaveFile (char *filename, void *buffer, int count)
-{
-   FILE   *f;
-
-   f = SafeOpenWrite (filename);
-   SafeWrite (f, buffer, count);
-   fclose (f);
 }
 
 
