@@ -7,7 +7,7 @@
 #define ISO_CHAR_HEIGHT 16
 extern const unsigned char iso_font[256*16];
 
-#define TEXT_SCALE 1
+extern int textScale;
 
 extern void draw_text(int x, int y, const char *text);
 

@@ -28,9 +28,20 @@ static int mrelx=0, mrely=0;
 
 int aspectmode=0;
 
+int textScale=1;
+
+void rescale_text(void)
+{
+   int realw, realh;
+   if (SDL_GetRendererOutputSize(renderer, &realw, &realh) >= 0) {
+      textScale = MAX(1, MIN(3, realw/SCREENW));
+   }
+}
+
+
 void setup_sdl(void)
 {
-   int winpos, i, j, k;
+   int winpos, winflg, i, j, k;
    SDL_Surface *surf;
    Uint32 *pix;
    Uint8 btmp;
@@ -40,7 +51,8 @@ void setup_sdl(void)
    init = 1;
 
    winpos = SDL_WINDOWPOS_CENTERED_DISPLAY(0);
-   window = SDL_CreateWindow("qmap", winpos, winpos, SCREENW, SCREENH, SDL_WINDOW_RESIZABLE);
+   winflg = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+   window = SDL_CreateWindow("qmap", winpos, winpos, SCREENW, SCREENH, winflg);
    if (!window)
       fatal("Couldn't create window");
 
@@ -82,6 +94,8 @@ void setup_sdl(void)
 
       SDL_FreeSurface(surf);
    }
+
+   rescale_text();
 }
 
 void close_sdl(void)
@@ -159,18 +173,21 @@ void set_pal(uchar *pal)
 void draw_text(int x, int y, const char *text)
 {
    SDL_Rect src, dst;
+   int stride;
 
    if (fonttex) {
       dst.x = x;
       dst.y = y;
       src.w = ISO_CHAR_WIDTH;
       src.h = ISO_CHAR_HEIGHT;
-      dst.w = ISO_CHAR_WIDTH * TEXT_SCALE;
-      dst.h = ISO_CHAR_HEIGHT * TEXT_SCALE;
+      dst.w = ISO_CHAR_WIDTH * textScale;
+      dst.h = ISO_CHAR_HEIGHT * textScale;
+
+      stride = dst.w + textScale;
 
       while (*text != '\0') {
          if (*text == '\n') {
-            dst.x = x - dst.w;
+            dst.x = x - stride;
             dst.y += dst.h;
          } else if (*text != ' ') {
             src.x = (*text & 0xF) * src.w;
@@ -179,7 +196,7 @@ void draw_text(int x, int y, const char *text)
             SDL_RenderCopy(renderer, fonttex, &src, &dst);
          }
 
-         dst.x += dst.w;
+         dst.x += stride;
          ++text;
       }
    }
@@ -211,8 +228,11 @@ void poll_events(bool *running)
                proj_ymod = ((float)winw / (float)winh) * (200.0f / 320.0f);
             }
          }
-      } else if (aspectmode == 2 && event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-         proj_ymod = ((float)event.window.data1 / (float)event.window.data2) * (200.0f / 320.0f);
+      } else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+         rescale_text();
+         if (aspectmode == 2) {
+            proj_ymod = ((float)event.window.data1 / (float)event.window.data2) * (200.0f / 320.0f);
+         }
       }
    }
 }
