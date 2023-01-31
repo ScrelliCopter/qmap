@@ -1,23 +1,7 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(qmap)
 
-if (NOT EMSCRIPTEN)
-	find_package(SDL2 REQUIRED)
-	add_definitions(${SDL2_CFLAGS} -Wall -Wextra)
-	include_directories(${SDL2_INCLUDE_DIRS})
-	set(LIBS ${SDL2_LIBRARIES} m)
-else()
-	set(FILES
-		"--preload-file palette.lmp"
-		"--preload-file colormap.lmp"
-		"--preload-file e1m1.bsp")
-
-	add_definitions(-O2 -s USE_SDL=2)
-	set(LIBS "-s USE_SDL=2" ${FILES} m)
-endif()
-
 set(SOURCES
-
 	3d.h
 	bspfile.h
 	bsp.h
@@ -51,4 +35,21 @@ set(SOURCES
 	iso_font.c)
 
 add_executable(qmap ${SOURCES})
-target_link_libraries(qmap ${LIBS})
+
+if (NOT EMSCRIPTEN)
+	find_package(SDL2 REQUIRED)
+	target_link_libraries(qmap
+		$<$<PLATFORM_ID:Windows>:SDL2::SDL2main>
+		SDL2::SDL2
+		$<$<C_COMPILER_ID:Clang,GNU>:m>)
+	target_compile_options(qmap PRIVATE
+		$<$<C_COMPILER_ID:AppleClang,Clang,GNU>:-Wall -Wextra>)
+else()
+	set(FILES
+		"--embed-file=palette.lmp"
+		"--embed-file=colormap.lmp"
+		"--embed-file=e1m1.bsp")
+
+	target_compile_options(qmap PRIVATE -O2 -sUSE_SDL=2)
+	target_link_options(qmap PRIVATE -sUSE_SDL=2 ${FILES})
+endif()
