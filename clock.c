@@ -1,5 +1,5 @@
 /* clock.c
- *   Copyright (C) 2018 a dinosaur (0BSD)
+ *   Copyright (C) 2018, 2023 a dinosaur (0BSD)
 */
 
 #include <SDL_timer.h>
@@ -11,32 +11,51 @@ float delta, fps;
 
 #define FPS_SMOOTH 128
 
-int fpsbuf[FPS_SMOOTH];
-int fpsidx, prevtime;
+unsigned fpsbuf[FPS_SMOOTH];
+int fpsidx;
+Uint64 prevtime;
+double freqDivisor;
+
+#define USE_PERFCOUNT
 
 void clock_init(void)
 {
    fpsidx = 0;
-   prevtime = SDL_GetTicks();
+#ifdef USE_PERFCOUNT
+   prevtime = SDL_GetPerformanceCounter();
+	freqDivisor = (double)SDL_GetPerformanceFrequency();
+#else
+   prevtime = SDL_GetTicks64();
+#endif
    memset(fpsbuf, 0, sizeof(fpsbuf));
 }
 
 void clock_tick(void)
 {
-   int i, curtime, diff, total;
+   int i;
+   Uint64 curtime, diff, total;
 
-   curtime = SDL_GetTicks();
+#ifdef USE_PERFCOUNT
+   curtime = SDL_GetPerformanceCounter();
    diff = curtime - prevtime;
-   fpsidx = (fpsidx + 1) % FPS_SMOOTH;
+   delta = (float)((double)diff / freqDivisor);
+#else
+   curtime = SDL_GetTicks64();
+   diff = curtime - prevtime;
+   delta = (float)((double)diff / 1000.0); // compute deltatime
+#endif
+   if (++fpsidx >= FPS_SMOOTH)
+	   fpsidx = 0;
    prevtime = curtime;
-
-   // compute deltatime
-   delta = (float)diff / 1000.0f;
 
    // compute average FPS
    fpsbuf[fpsidx] = diff;
    total = 0;
    for (i=0; i < FPS_SMOOTH; ++i)
       total += fpsbuf[i];
-   fps = 1000.0f / ((float)total / (float)FPS_SMOOTH);
+#ifdef USE_PERFCOUNT
+   fps = (float)(freqDivisor / ((double)total / (double)FPS_SMOOTH));
+#else
+   fps = (float)(1000.0 / ((double)total / (double)FPS_SMOOTH));
+#endif
 }
