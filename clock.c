@@ -23,7 +23,7 @@ void clock_init(void)
    fpsidx = 0;
 #ifdef USE_PERFCOUNT
    prevtime = SDL_GetPerformanceCounter();
-	freqDivisor = (double)SDL_GetPerformanceFrequency();
+   freqDivisor = (double)SDL_GetPerformanceFrequency();
 #else
    prevtime = SDL_GetTicks64();
 #endif
@@ -45,7 +45,7 @@ void clock_tick(void)
    delta = (float)((double)diff / 1000.0); // compute deltatime
 #endif
    if (++fpsidx >= FPS_SMOOTH)
-	   fpsidx = 0;
+      fpsidx = 0;
    prevtime = curtime;
 
    // compute average FPS

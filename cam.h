@@ -3,10 +3,9 @@
 
 #include "3d.h"
 
-typedef struct
-{
-	vector loc, vel;
-	angvec ang, angvel;
+typedef struct {
+   vector loc, vel;
+   angvec ang, angvel;
 } camera;
 
 extern void cam_init(camera *cam);
