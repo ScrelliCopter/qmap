@@ -1,0 +1,14 @@
+.DS_Store
+.idea/
+.vs/
+*.dat
+build/
+embuild/
+xcode/
+cmake-build-*/
+*.lmp
+*.bsp
+id1/
+maps/
+quake106.zip
+*.1
