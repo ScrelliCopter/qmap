@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-EMSDK_PATH="$HOME/Git/emsdk"
+EMSDK_PATH="$HOME/repos/sdk/emsdk"
 BUILDDIR=embuild
 
 mkdir -p "$BUILDDIR"

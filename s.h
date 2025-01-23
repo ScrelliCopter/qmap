@@ -2,18 +2,15 @@
 #define INC_S_H
 
 #include "fix.h"
+#include <stdbool.h>
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
 typedef unsigned long ulong;
 typedef unsigned short ushort;
-typedef int bool;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef int int32;
-
-#define FALSE 0
-#define TRUE  1
 
 #define MAX(a, b)      (((a) > (b)) ? (a) : (b))
 #define MIN(a, b)      (((a) < (b)) ? (a) : (b))

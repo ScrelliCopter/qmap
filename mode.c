@@ -5,10 +5,10 @@
  *   with modern SDL2 equivalents
  *
  *   Copyright 1997 Sean Barett (Public domain)
- *   Copyright 2018 a-dinosaur (0BSD)
+ *   Copyright 2018, 2025 a dinosaur (0BSD)
  */
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +23,7 @@ static SDL_Renderer* renderer=NULL;
 static SDL_Surface* framebuffer=NULL;
 static SDL_Texture* texture=NULL, *fonttex=NULL;
 static SDL_Event event;
-static SDL_Colour palette[256];
+static SDL_Color palette[256];
 static int mrelx=0, mrely=0;
 
 int aspectmode=0;
@@ -33,7 +33,7 @@ int textScale=1;
 void rescale_text(void)
 {
    int realw, realh;
-   if (SDL_GetRendererOutputSize(renderer, &realw, &realh) >= 0) {
+   if (SDL_GetCurrentRenderOutputSize(renderer, &realw, &realh)) {
       textScale = MAX(1, MIN(3, realw/SCREENW));
    }
 }
@@ -41,36 +41,36 @@ void rescale_text(void)
 
 void setup_sdl(void)
 {
-   int winpos, winflg, i, j, k;
+   int winflg, i, j, k;
    SDL_Surface *surf;
    Uint32 *pix;
    Uint8 btmp;
 
-   if (SDL_Init(SDL_INIT_VIDEO) < 0)
+   if (!SDL_Init(SDL_INIT_VIDEO))
       fatal("Couldn't initialise SDL2");
    init = 1;
 
-   winpos = SDL_WINDOWPOS_CENTERED_DISPLAY(0);
-   winflg = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
-   window = SDL_CreateWindow("qmap", winpos, winpos, SCREENW, SCREENH, winflg);
+   winflg = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+   window = SDL_CreateWindow("qmap", SCREENW, SCREENH, winflg);
    if (!window)
       fatal("Couldn't create window");
 
-   renderer = SDL_CreateRenderer(window, -1, 0);
+   renderer = SDL_CreateRenderer(window, NULL);
    if (!renderer)
       fatal("Couldn't open graphics interface");
 
-   framebuffer = SDL_CreateRGBSurfaceWithFormat(0, SCREENW, SCREENH, 32, SDL_PIXELFORMAT_ABGR8888);
+   framebuffer = SDL_CreateSurface(SCREENW, SCREENH, SDL_PIXELFORMAT_ABGR8888);
    if (!framebuffer)
       fatal("Couldn't allocate software framebuffer");
 
    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREENW, SCREENH);
    if (!texture)
       fatal("Couldn't allocate gpu framebuffer");
+   SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+   SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
 
-   surf = SDL_CreateRGBSurfaceWithFormat(0, 16 * ISO_CHAR_WIDTH, 16 * ISO_CHAR_HEIGHT, 8, SDL_PIXELFORMAT_RGBA32);
+   surf = SDL_CreateSurface(16 * ISO_CHAR_WIDTH, 16 * ISO_CHAR_HEIGHT, SDL_PIXELFORMAT_RGBA32);
    if (surf) {
-
       for (i=ISO_CHAR_MIN; i <= ISO_CHAR_MAX; ++i) {
          pix = (Uint32*)surf->pixels;
          pix += (i >> 4) * surf->w * ISO_CHAR_HEIGHT;
@@ -89,10 +89,11 @@ void setup_sdl(void)
 
       fonttex = SDL_CreateTextureFromSurface(renderer, surf);
       if (fonttex) {
+         SDL_SetTextureScaleMode(fonttex, SDL_SCALEMODE_NEAREST);
          SDL_SetTextureBlendMode(fonttex, SDL_BLENDMODE_BLEND);
       }
 
-      SDL_FreeSurface(surf);
+      SDL_DestroySurface(surf);
    }
 
    rescale_text();
@@ -111,7 +112,7 @@ void close_sdl(void)
    }
 
    if (framebuffer) {
-      SDL_FreeSurface(framebuffer);
+      SDL_DestroySurface(framebuffer);
       framebuffer = NULL;
    }
 
@@ -135,10 +136,10 @@ void blit(char *src)
 {
    int i, j;
    uchar *linesrc;
-   SDL_Colour *dst;
+   SDL_Color *dst;
 
    for (i=0; i < SCREENH; ++i) {
-      dst = (SDL_Colour*)((char*)framebuffer->pixels + i * framebuffer->pitch);
+      dst = (SDL_Color*)((char*)framebuffer->pixels + i * framebuffer->pitch);
       linesrc = (uchar*)src + i * SCREENW;
 
       for (j=0; j < SCREENW; ++j) {
@@ -147,7 +148,7 @@ void blit(char *src)
    }
 
    SDL_UpdateTexture(texture, NULL, framebuffer->pixels, framebuffer->pitch);
-   SDL_RenderCopy(renderer, texture, NULL, NULL);
+   SDL_RenderTexture(renderer, texture, NULL, NULL);
 }
 
 void present(void)
@@ -158,7 +159,7 @@ void present(void)
 void set_pal(uchar *pal)
 {
    int i;
-   SDL_Colour c;
+   SDL_Color c;
 
    for (i=0; i < 256; ++i) {
       c.r = (*pal++);
@@ -172,28 +173,29 @@ void set_pal(uchar *pal)
 
 void draw_text(int x, int y, const char *text)
 {
-   SDL_Rect src, dst;
-   int stride;
+   SDL_FRect src, dst;
+   float stride;
+   const float fTextScale = (float)textScale;
 
    if (fonttex) {
-      dst.x = x;
-      dst.y = y;
-      src.w = ISO_CHAR_WIDTH;
-      src.h = ISO_CHAR_HEIGHT;
-      dst.w = ISO_CHAR_WIDTH * textScale;
-      dst.h = ISO_CHAR_HEIGHT * textScale;
+      dst.x = (float)x;
+      dst.y = (float)y;
+      src.w = (float)ISO_CHAR_WIDTH;
+      src.h = (float)ISO_CHAR_HEIGHT;
+      dst.w = src.w * fTextScale;
+      dst.h = src.h * fTextScale;
 
-      stride = dst.w + textScale;
+      stride = dst.w + fTextScale;
 
       while (*text != '\0') {
          if (*text == '\n') {
             dst.x = x - stride;
             dst.y += dst.h;
          } else if (*text != ' ') {
-            src.x = (*text & 0xF) * src.w;
-            src.y = (*text >> 4) * src.h;
+            src.x = (float)(*text & 0xF) * src.w;
+            src.y = (float)(*text >> 4) * src.h;
 
-            SDL_RenderCopy(renderer, fonttex, &src, &dst);
+            SDL_RenderTexture(renderer, fonttex, &src, &dst);
          }
 
          dst.x += stride;
@@ -207,16 +209,16 @@ void poll_events(bool *running)
 {
    while (SDL_PollEvent(&event) > 0)
    {
-      if (event.type == SDL_QUIT) {
+      if (event.type == SDL_EVENT_QUIT) {
          *running = 0;
-      } else if (event.type == SDL_MOUSEMOTION) {
+      } else if (event.type == SDL_EVENT_MOUSE_MOTION) {
          mrelx += event.motion.xrel;
          mrely += event.motion.yrel;
-      } else if (event.type == SDL_KEYDOWN) {
-         if (event.key.keysym.sym == SDLK_m) {
-            SDL_SetRelativeMouseMode(!SDL_GetRelativeMouseMode());
+      } else if (event.type == SDL_EVENT_KEY_DOWN) {
+         if (event.key.key == SDLK_M) {
+            SDL_SetWindowRelativeMouseMode(window, !SDL_GetWindowRelativeMouseMode(window));
             mrelx = mrely = 0;
-         } else if (event.key.keysym.sym == SDLK_p) {
+         } else if (event.key.key == SDLK_P) {
             aspectmode = (aspectmode + 1) % 3;
             if (aspectmode == 0)
                proj_ymod = 1.0f;
@@ -228,7 +230,7 @@ void poll_events(bool *running)
                proj_ymod = ((float)winw / (float)winh) * (200.0f / 320.0f);
             }
          }
-      } else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+      } else if (event.type == SDL_EVENT_WINDOW_RESIZED) {
          rescale_text();
          if (aspectmode == 2) {
             proj_ymod = ((float)event.window.data1 / (float)event.window.data2) * (200.0f / 320.0f);
@@ -239,13 +241,13 @@ void poll_events(bool *running)
 
 bool get_key(int scancode)
 {
-   const Uint8 *kb = SDL_GetKeyboardState(NULL);
+   const bool *kb = SDL_GetKeyboardState(NULL);
    return (bool)kb[scancode];
 }
 
 extern bool get_mmove(int *outx, int *outy)
 {
-   if (SDL_GetRelativeMouseMode() && (mrelx || mrely)) {
+   if (SDL_GetWindowRelativeMouseMode(window) && (mrelx || mrely)) {
       *outx = mrelx;
       mrelx = 0;
       *outy = mrely;

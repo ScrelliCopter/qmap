@@ -6,7 +6,7 @@
 #include <emscripten.h>
 #endif
 
-#include <SDL_scancode.h>
+#include <SDL3/SDL_scancode.h>
 #include <stdio.h>
 #include "bspfile.h"
 #include "mode.h"
@@ -61,7 +61,7 @@ void sim_loop(void)
 
 void run_sim(void)
 {
-   running = TRUE;
+   running = true;
 
    scr_buf = malloc(SCREENW * SCREENH);
    memset(scr_buf, 0, SCREENW * SCREENH);

@@ -2,7 +2,8 @@
  *   Copyright 2018 a dinosaur (0BSD)
  */
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <math.h>
 
 #include "mode.h"
 #include "clock.h"

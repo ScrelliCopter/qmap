@@ -35,21 +35,23 @@ set(SOURCES
 	iso_font.c)
 
 add_executable(qmap ${SOURCES})
+find_package(SDL3 REQUIRED CONFIG)
+target_link_libraries(qmap SDL3::SDL3)
+target_link_libraries(qmap $<$<C_COMPILER_ID:Clang,GNU>:m>)
+target_compile_options(qmap PRIVATE
+	$<$<C_COMPILER_ID:AppleClang,Clang,GNU>:-Wall -Wextra>)
 
-if (NOT EMSCRIPTEN)
-	find_package(SDL2 REQUIRED)
-	target_link_libraries(qmap
-		$<$<PLATFORM_ID:Windows>:SDL2::SDL2main>
-		SDL2::SDL2
-		$<$<C_COMPILER_ID:Clang,GNU>:m>)
-	target_compile_options(qmap PRIVATE
-		$<$<C_COMPILER_ID:AppleClang,Clang,GNU>:-Wall -Wextra>)
-else()
+if (CMAKE_C_PLATFORM_ID STREQUAL "Darwin")
+	get_property(SDL3_IMPORTED_LOCATION TARGET SDL3::SDL3 PROPERTY IMPORTED_LOCATION)
+	if (SDL3_IMPORTED_LOCATION MATCHES "^/Library/Frameworks/")
+		set_property(TARGET qmap PROPERTY BUILD_RPATH "/Library/Frameworks")
+	endif()
+endif()
+
+if (EMSCRIPTEN)
 	set(FILES
 		"--embed-file=palette.lmp"
 		"--embed-file=colormap.lmp"
 		"--embed-file=e1m1.bsp")
-
-	target_compile_options(qmap PRIVATE -O2 -sUSE_SDL=2)
-	target_link_options(qmap PRIVATE -sUSE_SDL=2 ${FILES})
+	target_link_options(qmap PRIVATE ${FILES})
 endif()
